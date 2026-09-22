@@ -1,195 +1,252 @@
 import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
 
+/**
+ * Enterprise Cybersecurity Telemetry & Threat Mesh Animation
+ * Designed with the aesthetic of high-end defense platforms (CrowdStrike, Darktrace, Cloudflare Radar)
+ * Features dynamic interconnected security nodes, live packet pulses, and interactive cursor magnetic field.
+ */
 export function Cyber3DScene() {
-  const mountRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const currentMount = mountRef.current;
-    if (!currentMount) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    const width = currentMount.clientWidth;
-    const height = currentMount.clientHeight;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
 
-    // Scene setup
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x06090e, 0.025);
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
 
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.z = 22;
-    camera.position.y = 1;
+    // Particle nodes configuration
+    const NODE_COUNT = Math.floor(Math.min(width, 1600) / 14); // Responsive density
+    const MAX_DISTANCE = 130;
+    const MOUSE_RADIUS = 160;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    currentMount.appendChild(renderer.domElement);
-
-    // 1. Central Geodesic Defense Core (Outer Shield)
-    const coreGeo = new THREE.IcosahedronGeometry(4.2, 2);
-    const coreMat = new THREE.MeshBasicMaterial({
-      color: 0x0284c7,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.35,
-    });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    coreMesh.position.y = 2.5;
-    scene.add(coreMesh);
-
-    // 2. Inner Glowing Core
-    const innerGeo = new THREE.IcosahedronGeometry(2.8, 1);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.7,
-    });
-    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-    innerMesh.position.y = 2.5;
-    scene.add(innerMesh);
-
-    // 3. Concentric Orbital Rings (Security Perimeters)
-    const ringGeo1 = new THREE.TorusGeometry(6.2, 0.035, 16, 120);
-    const ringMat1 = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.55,
-    });
-    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
-    ring1.position.y = 2.5;
-    ring1.rotation.x = Math.PI / 3;
-    scene.add(ring1);
-
-    const ringGeo2 = new THREE.TorusGeometry(7.6, 0.025, 16, 120);
-    const ringMat2 = new THREE.MeshBasicMaterial({
-      color: 0x818cf8,
-      transparent: true,
-      opacity: 0.4,
-    });
-    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-    ring2.position.y = 2.5;
-    ring2.rotation.y = Math.PI / 4;
-    scene.add(ring2);
-
-    // 4. Data Particle Field (Telemetry nodes)
-    const particleCount = 600;
-    const particleGeo = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-
-    const color1 = new THREE.Color(0x38bdf8);
-    const color2 = new THREE.Color(0x818cf8);
-
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 36;
-      positions[i + 1] = (Math.random() - 0.5) * 36 + 2;
-      positions[i + 2] = (Math.random() - 0.5) * 26;
-
-      const mixedColor = Math.random() > 0.5 ? color1 : color2;
-      colors[i] = mixedColor.r;
-      colors[i + 1] = mixedColor.g;
-      colors[i + 2] = mixedColor.b;
-    }
-
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-    const particleMat = new THREE.PointsMaterial({
-      size: 0.12,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.7,
-    });
-    const particleSystem = new THREE.Points(particleGeo, particleMat);
-    scene.add(particleSystem);
-
-    // Mouse Interaction
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
-
-    const handleMouseMove = (event) => {
-      mouseX = (event.clientX - width / 2) * 0.0008;
-      mouseY = (event.clientY - height / 2) * 0.0008;
+    let mouse = {
+      x: width / 2,
+      y: height / 2,
+      targetX: width / 2,
+      targetY: height / 2,
+      active: false,
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    class SecurityNode {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = (Math.random() - 0.5) * 0.6;
+        this.radius = Math.random() * 1.8 + 1.2;
+        this.baseAlpha = Math.random() * 0.5 + 0.3;
+        this.alpha = this.baseAlpha;
+        this.pulse = Math.random() * Math.PI * 2;
+        this.pulseSpeed = 0.02 + Math.random() * 0.03;
+        // Diverse cyber security node types: Core cyan, Alert amber, Shield indigo
+        const rand = Math.random();
+        if (rand > 0.85) {
+          this.color = '56, 189, 248'; // Bright Cyan
+          this.isKeyNode = true;
+        } else if (rand > 0.7) {
+          this.color = '129, 140, 248'; // Indigo
+          this.isKeyNode = false;
+        } else {
+          this.color = '14, 165, 233'; // Sky Blue
+          this.isKeyNode = false;
+        }
+      }
 
-    // Window Resize Handler
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Bounce gently off bounds
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        // Pulse glow
+        this.pulse += this.pulseSpeed;
+        this.alpha = this.baseAlpha + Math.sin(this.pulse) * 0.25;
+
+        // Mouse magnetic repulsion / interaction
+        if (mouse.active) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MOUSE_RADIUS) {
+            const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+            this.x -= (dx / dist) * force * 1.8;
+            this.y -= (dy / dist) * force * 1.8;
+          }
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+        ctx.fill();
+
+        // Extra radar ping ring on key security nodes
+        if (this.isKeyNode) {
+          const pingRadius = this.radius + (Math.sin(this.pulse) + 1) * 3.5;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, pingRadius, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${this.color}, ${Math.max(0, 0.4 - pingRadius * 0.04)})`;
+          ctx.lineWidth = 0.75;
+          ctx.stroke();
+        }
+      }
+    }
+
+    const nodes = Array.from({ length: NODE_COUNT }, () => new SecurityNode());
+
+    // Simulated data packets traveling along lines
+    const packets = [];
+    const createPacket = (nodeA, nodeB) => {
+      packets.push({
+        x: nodeA.x,
+        y: nodeA.y,
+        targetX: nodeB.x,
+        targetY: nodeB.y,
+        progress: 0,
+        speed: 0.02 + Math.random() * 0.02,
+        color: nodeA.color,
+      });
+    };
+
+    let packetTimer = 0;
+
     const handleResize = () => {
-      if (!currentMount) return;
-      const newWidth = currentMount.clientWidth;
-      const newHeight = currentMount.clientHeight;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+
+    const handleMouseMove = (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+      mouse.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.active = false;
     };
 
     window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
 
-    // Animation Loop
-    let animationFrameId;
-    let clock = new THREE.Clock();
+    const render = () => {
+      // Clear with dark cyber fade trail
+      ctx.clearRect(0, 0, width, height);
 
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+      // Smooth mouse follow
+      mouse.x += (mouse.targetX - mouse.x) * 0.1;
+      mouse.y += (mouse.targetY - mouse.y) * 0.1;
 
-      // Smooth camera interpolation
-      targetX += (mouseX - targetX) * 0.05;
-      targetY += (mouseY - targetY) * 0.05;
+      // Draw subtle interactive cursor radar field
+      if (mouse.active) {
+        const gradient = ctx.createRadialGradient(
+          mouse.x,
+          mouse.y,
+          0,
+          mouse.x,
+          mouse.y,
+          MOUSE_RADIUS
+        );
+        gradient.addColorStop(0, 'rgba(56, 189, 248, 0.07)');
+        gradient.addColorStop(0.7, 'rgba(56, 189, 248, 0.02)');
+        gradient.addColorStop(1, 'rgba(6, 9, 14, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, MOUSE_RADIUS, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
-      // Gentle pulsating breathe
-      const scale = 1 + Math.sin(elapsedTime * 1.5) * 0.03;
-      coreMesh.scale.set(scale, scale, scale);
-      innerMesh.scale.set(scale * 0.98, scale * 0.98, scale * 0.98);
+      // Update and connect nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const nodeA = nodes[i];
+        nodeA.update();
+        nodeA.draw();
 
-      coreMesh.rotation.y += 0.0035;
-      coreMesh.rotation.x += 0.0018;
+        // Connect with nearby nodes
+        for (let j = i + 1; j < nodes.length; j++) {
+          const nodeB = nodes[j];
+          const dx = nodeA.x - nodeB.x;
+          const dy = nodeA.y - nodeB.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
-      innerMesh.rotation.y -= 0.005;
-      innerMesh.rotation.z += 0.0025;
+          if (dist < MAX_DISTANCE) {
+            const lineAlpha = (1 - dist / MAX_DISTANCE) * 0.22;
+            ctx.beginPath();
+            ctx.moveTo(nodeA.x, nodeA.y);
+            ctx.lineTo(nodeB.x, nodeB.y);
+            ctx.strokeStyle = `rgba(56, 189, 248, ${lineAlpha})`;
+            ctx.lineWidth = 0.85;
+            ctx.stroke();
 
-      ring1.rotation.z += 0.004;
-      ring2.rotation.x += 0.0035;
+            // Occasionally spawn a traveling security packet along connection
+            if (packetTimer % 45 === 0 && Math.random() < 0.03 && packets.length < 25) {
+              createPacket(nodeA, nodeB);
+            }
+          }
+        }
 
-      particleSystem.rotation.y += 0.0006;
+        // Connect with mouse cursor if close
+        if (mouse.active) {
+          const dx = nodeA.x - mouse.x;
+          const dy = nodeA.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MOUSE_RADIUS) {
+            const lineAlpha = (1 - dist / MOUSE_RADIUS) * 0.35;
+            ctx.beginPath();
+            ctx.moveTo(nodeA.x, nodeA.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = `rgba(56, 189, 248, ${lineAlpha})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
 
-      camera.position.x = targetX * 10;
-      camera.position.y = 1 - targetY * 8;
-      camera.lookAt(0, 2.5, 0);
+      // Render traveling data packets
+      packetTimer++;
+      for (let k = packets.length - 1; k >= 0; k--) {
+        const p = packets[k];
+        p.progress += p.speed;
+        if (p.progress >= 1) {
+          packets.splice(k, 1);
+          continue;
+        }
+        const px = p.x + (p.targetX - p.x) * p.progress;
+        const py = p.y + (p.targetY - p.y) * p.progress;
 
-      renderer.render(scene, camera);
+        ctx.beginPath();
+        ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, 0.85)`;
+        ctx.shadowColor = 'rgba(56, 189, 248, 1)';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowBlur = 0; // reset
+      }
+
+      animationFrameId = requestAnimationFrame(render);
     };
 
-    animate();
+    render();
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
-      if (currentMount && renderer.domElement) {
-        currentMount.removeChild(renderer.domElement);
-      }
-      coreGeo.dispose();
-      coreMat.dispose();
-      innerGeo.dispose();
-      innerMat.dispose();
-      ringGeo1.dispose();
-      ringMat1.dispose();
-      ringGeo2.dispose();
-      ringMat2.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
-      renderer.dispose();
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 
   return (
-    <div
-      ref={mountRef}
-      className="absolute top-0 left-0 w-full h-[850px] pointer-events-none z-0 overflow-hidden [mask-image:radial-gradient(ellipse_at_center_40%,black_40%,transparent_85%)]"
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none z-0"
     />
   );
 }
