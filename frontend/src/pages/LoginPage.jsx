@@ -69,12 +69,12 @@ export function LoginPage() {
   useEffect(() => {
     const eventPool = [
       { type: 'AUTH_VERIFY', color: 'text-emerald-400', text: 'JWT HS-256 signature cryptographically valid' },
-      { type: 'RLS_SCOPED', color: 'text-sky-400', text: 'Row-level query bounded to tenant context' },
-      { type: 'INTERCEPT', color: 'text-rose-400', text: 'Unauthorized cross-tenant probe intercepted by RLS gateway' },
-      { type: '403_BLOCKED', color: 'text-amber-400 font-semibold', text: 'HTTP 403 Forbidden: Zero data exposure guaranteed' },
+      { type: 'RLS_SCOPED', color: 'text-sky-400', text: 'Query bounded to authenticated tenant context' },
+      { type: 'INTERCEPT', color: 'text-rose-400', text: 'Cross-tenant probe blocked (HTTP 403 Forbidden)' },
+      { type: 'RLS_ENFORCE', color: 'text-amber-400 font-semibold', text: 'Zero-trust isolation enforced: 0 data leaks' },
       { type: 'AUDIT_LEDGER', color: 'text-slate-300', text: 'Cryptographic SHA-256 audit entry persisted' },
-      { type: 'RBAC_GUARD', color: 'text-cyan-400', text: 'Role-based access check passed: permissions verified' },
-      { type: 'HEARTBEAT', color: 'text-emerald-400', text: 'Zero-Trust gateway operational • 0 active anomalies' },
+      { type: 'RBAC_GUARD', color: 'text-cyan-400', text: 'Role-based access check passed: verified' },
+      { type: 'HEARTBEAT', color: 'text-emerald-400', text: 'Zero-Trust gateway active • 0 anomalies' },
     ];
 
     let index = 0;
@@ -115,9 +115,12 @@ export function LoginPage() {
     }
   };
 
-  const setDemoCredentials = (demoEmail, demoRole) => {
+  const setDemoCredentials = (demoEmail, demoRole, tenantKey) => {
     setEmail(demoEmail);
     setPassword('Password123!');
+    if (tenantKey) {
+      setSelectedTenant(tenantKey);
+    }
     setFieldErrors({});
     toast.info(`Loaded demo credentials: ${demoRole}`);
   };
@@ -292,21 +295,21 @@ export function LoginPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
-                      onClick={() => setDemoCredentials('admin@apex.com', 'Apex ADMIN')}
+                      onClick={() => setDemoCredentials('admin@apex.com', 'Apex ADMIN', 'apex')}
                       className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-purple-500/30 hover:border-purple-400 text-purple-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Admin
                     </button>
                     <button
                       type="button"
-                      onClick={() => setDemoCredentials('manager@apex.com', 'Apex MANAGER')}
+                      onClick={() => setDemoCredentials('manager@apex.com', 'Apex MANAGER', 'apex')}
                       className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Manager
                     </button>
                     <button
                       type="button"
-                      onClick={() => setDemoCredentials('analyst@apex.com', 'Apex ANALYST')}
+                      onClick={() => setDemoCredentials('analyst@apex.com', 'Apex ANALYST', 'apex')}
                       className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Analyst
@@ -325,21 +328,21 @@ export function LoginPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
-                      onClick={() => setDemoCredentials('admin@sentinel.com', 'Sentinel ADMIN')}
+                      onClick={() => setDemoCredentials('admin@sentinel.com', 'Sentinel ADMIN', 'sentinel')}
                       className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-purple-500/30 hover:border-purple-400 text-purple-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Admin
                     </button>
                     <button
                       type="button"
-                      onClick={() => setDemoCredentials('manager@sentinel.com', 'Sentinel MANAGER')}
+                      onClick={() => setDemoCredentials('manager@sentinel.com', 'Sentinel MANAGER', 'sentinel')}
                       className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Manager
                     </button>
                     <button
                       type="button"
-                      onClick={() => setDemoCredentials('user@sentinel.com', 'Sentinel USER')}
+                      onClick={() => setDemoCredentials('user@sentinel.com', 'Sentinel USER', 'sentinel')}
                       className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-slate-500 text-slate-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       User
@@ -386,68 +389,70 @@ export function LoginPage() {
           </div>
 
           {/* Interactive Multi-Tenant Boundary Visualizer */}
-          <div className="my-4 space-y-3">
-            <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-slate-300">
+          <div className="my-3 space-y-2.5">
+            <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-slate-200">
                 <Layers className="w-3.5 h-3.5 text-sky-400" />
                 Multi-Tenant Isolation Architecture
               </span>
-              <span className="text-sky-400">RLS POLICY: ACTIVE</span>
+              <span className="text-emerald-400 font-mono text-[9px] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                RLS POLICY: ENFORCED
+              </span>
             </div>
 
             {/* Tenant Boundary Diagram */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {/* Tenant 1 Card */}
-              <div className="bg-[#0B101B] border border-sky-500/30 rounded-xl p-3 relative overflow-hidden group hover:border-sky-500/50 transition-colors">
+              {/* Tenant 1 Card: Apex Defense */}
+              <div className="bg-[#0B101B] border border-sky-500/40 rounded-xl p-3 relative overflow-hidden group hover:border-sky-400 transition-colors shadow-sm">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="text-sky-400 font-bold text-xs flex items-center gap-1.5">
-                    <Server className="w-3 h-3 text-sky-400" />
+                    <Server className="w-3.5 h-3.5 text-sky-400" />
                     Apex Defense
                   </div>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
-                    tenant: 01
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
+                    apex-defense
                   </span>
                 </div>
                 <div className="text-[10px] text-slate-400 space-y-0.5">
-                  <div>Scope: <span className="text-emerald-400">Strict RLS Context</span></div>
-                  <div>Users: <span className="text-slate-200">Admin, Manager, Analyst</span></div>
-                  <div>Cross-Access: <span className="text-rose-400 font-bold">BLOCKED (403)</span></div>
+                  <div className="flex justify-between"><span>Boundary:</span><span className="text-emerald-400 font-semibold">Strict PostgreSQL RLS</span></div>
+                  <div className="flex justify-between"><span>RBAC Roles:</span><span className="text-slate-200">Admin, Manager, Analyst</span></div>
+                  <div className="flex justify-between"><span>Cross-Query:</span><span className="text-rose-400 font-bold">BLOCKED (403)</span></div>
                 </div>
               </div>
 
-              {/* Tenant 2 Card */}
-              <div className="bg-[#0B101B] border border-indigo-500/30 rounded-xl p-3 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+              {/* Tenant 2 Card: Sentinel Cyber */}
+              <div className="bg-[#0B101B] border border-indigo-500/40 rounded-xl p-3 relative overflow-hidden group hover:border-indigo-400 transition-colors shadow-sm">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="text-indigo-400 font-bold text-xs flex items-center gap-1.5">
-                    <Server className="w-3 h-3 text-indigo-400" />
+                    <Server className="w-3.5 h-3.5 text-indigo-400" />
                     Sentinel Cyber
                   </div>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                    tenant: 02
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    sentinel-cyber
                   </span>
                 </div>
                 <div className="text-[10px] text-slate-400 space-y-0.5">
-                  <div>Scope: <span className="text-emerald-400">Strict RLS Context</span></div>
-                  <div>Users: <span className="text-slate-200">Admin, Manager, User</span></div>
-                  <div>Cross-Access: <span className="text-rose-400 font-bold">BLOCKED (403)</span></div>
+                  <div className="flex justify-between"><span>Boundary:</span><span className="text-emerald-400 font-semibold">Strict PostgreSQL RLS</span></div>
+                  <div className="flex justify-between"><span>RBAC Roles:</span><span className="text-slate-200">Admin, Manager, User</span></div>
+                  <div className="flex justify-between"><span>Cross-Query:</span><span className="text-rose-400 font-bold">BLOCKED (403)</span></div>
                 </div>
               </div>
             </div>
 
             {/* Zero-Trust Wall Bar */}
-            <div className="bg-[#0F172A]/80 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-[10px]">
-              <span className="flex items-center gap-1.5 text-slate-300">
+            <div className="bg-[#0B101B] border border-slate-800 rounded-xl px-3 py-2 flex items-center justify-between text-[10px]">
+              <span className="flex items-center gap-1.5 text-slate-300 font-medium">
                 <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Zero-Trust RLS Firewall</span>
+                <span>Zero-Trust Cryptographic RLS Barrier</span>
               </span>
-              <span className="text-emerald-400 font-bold tracking-wide">
+              <span className="text-emerald-400 font-bold font-mono tracking-wide">
                 0 CROSS-TENANT DATA LEAKS
               </span>
             </div>
           </div>
 
           {/* Live Real-Time Defense Log Stream */}
-          <div className="my-2 bg-[#04060A] border border-slate-800/90 rounded-xl p-3 text-[10.5px] leading-relaxed shadow-inner font-mono text-slate-300 space-y-1">
+          <div className="my-2 bg-[#04060A] border border-slate-800/90 rounded-xl p-3 text-[10.5px] leading-relaxed shadow-inner font-mono text-slate-300 space-y-1 overflow-hidden">
             <div className="text-slate-500 text-[9.5px] pb-1 border-b border-slate-900 flex justify-between items-center">
               <span className="flex items-center gap-1.5 text-slate-400 font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -456,7 +461,7 @@ export function LoginPage() {
               <span className="text-sky-400 font-bold">{currentTime} UTC</span>
             </div>
             {logs.map((log) => (
-              <div key={log.id} className={log.color}>
+              <div key={log.id} className={`${log.color} truncate whitespace-nowrap`}>
                 <span className="text-slate-500">[{log.time}]</span> [{log.type}] {log.text}
               </div>
             ))}
