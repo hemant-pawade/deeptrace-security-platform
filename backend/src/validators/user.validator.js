@@ -18,8 +18,12 @@ const updateUserSchema = z.object({
 const userQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  search: z.string().trim().optional(),
-  role: z.enum(['ADMIN', 'MANAGER', 'USER']).optional(),
+  search: z.string().trim().optional().transform((v) => (v === '' ? undefined : v)),
+  role: z
+    .enum(['ADMIN', 'MANAGER', 'USER'])
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? undefined : v)),
   sortBy: z.enum(['full_name', 'email', 'role', 'created_at']).default('created_at'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });

@@ -62,10 +62,20 @@ export const dashboardApi = {
   getRecentActivity: () => apiFetch('/dashboard/recent-activity'),
 };
 
+function buildQueryString(params = {}) {
+  const clean = {};
+  for (const [key, val] of Object.entries(params)) {
+    if (val !== undefined && val !== null && val !== '') {
+      clean[key] = val;
+    }
+  }
+  const qs = new URLSearchParams(clean).toString();
+  return qs ? `?${qs}` : '';
+}
+
 export const campaignsApi = {
   list: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiFetch(`/campaigns${query ? `?${query}` : ''}`);
+    return apiFetch(`/campaigns${buildQueryString(params)}`);
   },
   getById: (id) => apiFetch(`/campaigns/${id}`),
   create: (data) =>
@@ -96,8 +106,7 @@ export const campaignsApi = {
 
 export const securityEventsApi = {
   list: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiFetch(`/security-events${query ? `?${query}` : ''}`);
+    return apiFetch(`/security-events${buildQueryString(params)}`);
   },
   getById: (id) => apiFetch(`/security-events/${id}`),
   create: (data) =>
@@ -114,8 +123,7 @@ export const securityEventsApi = {
 
 export const usersApi = {
   list: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiFetch(`/users${query ? `?${query}` : ''}`);
+    return apiFetch(`/users${buildQueryString(params)}`);
   },
   getById: (id) => apiFetch(`/users/${id}`),
   create: (data) =>
@@ -136,7 +144,6 @@ export const usersApi = {
 
 export const auditLogsApi = {
   list: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiFetch(`/audit-logs${query ? `?${query}` : ''}`);
+    return apiFetch(`/audit-logs${buildQueryString(params)}`);
   },
 };

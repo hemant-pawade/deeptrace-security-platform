@@ -19,8 +19,12 @@ const updateCampaignSchema = z.object({
 const campaignQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  search: z.string().trim().optional(),
-  status: z.enum(['DRAFT', 'ACTIVE', 'COMPLETED', 'CANCELLED']).optional(),
+  search: z.string().trim().optional().transform((v) => (v === '' ? undefined : v)),
+  status: z
+    .enum(['DRAFT', 'ACTIVE', 'COMPLETED', 'CANCELLED'])
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? undefined : v)),
   sortBy: z.enum(['name', 'status', 'start_date', 'end_date', 'created_at']).default('created_at'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });

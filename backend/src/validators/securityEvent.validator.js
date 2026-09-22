@@ -17,9 +17,17 @@ const updateSecurityEventSchema = z.object({
 const securityEventQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  search: z.string().trim().optional(),
-  severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
-  status: z.enum(['OPEN', 'RESOLVED']).optional(),
+  search: z.string().trim().optional().transform((v) => (v === '' ? undefined : v)),
+  severity: z
+    .enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'])
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? undefined : v)),
+  status: z
+    .enum(['OPEN', 'RESOLVED'])
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? undefined : v)),
   sortBy: z.enum(['event_type', 'severity', 'status', 'created_at']).default('created_at'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
