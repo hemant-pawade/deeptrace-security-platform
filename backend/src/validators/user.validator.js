@@ -10,6 +10,7 @@ const createUserSchema = z.object({
 });
 
 const updateUserSchema = z.object({
+  email: z.string().trim().email('Invalid email address format').optional(),
   full_name: z.string().trim().min(2).optional(),
   role: z.enum(['ADMIN', 'MANAGER', 'USER']).optional(),
   password: z

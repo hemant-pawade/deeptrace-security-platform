@@ -11,6 +11,9 @@
  * 6. Audit Logging Verification
  */
 
+require('dotenv').config();
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'deeptrace_super_secret_jwt_key_2026_production_grade_security';
+
 const http = require('http');
 const app = require('../src/app');
 

@@ -1,313 +1,252 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield,
   Lock,
-  Cpu,
-  Database,
+  Activity,
+  ScrollText,
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
-  Activity,
-  Layers,
-  Terminal,
-  ExternalLink,
-  Zap,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Cyber3DScene } from '../components/common/Cyber3DScene';
-import { Button } from '../components/common/Button';
 
 export function LandingPage() {
-  const [activeSimTenant, setActiveSimTenant] = useState('apex');
+  const [scrolled, setScrolled] = useState(false);
 
-  const capabilities = [
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const features = [
     {
       icon: Shield,
-      title: 'Zero-Trust Tenant Isolation',
-      desc: 'Shared-database architecture with mathematical query-scoping. Cross-tenant access strictly returns 404 Anti-Enumeration with zero data leakage.',
-      tag: 'CORE SECURITY',
-      tech: 'WHERE tenant_id = req.user.tenantId',
+      title: 'Tenant Isolation',
+      description: 'Shared-database architecture with cryptographically derived tenant query scoping, ensuring zero cross-tenant data exposure.',
     },
     {
-      icon: Layers,
-      title: 'Campaign State Machine',
-      desc: 'Deterministic lifecycle transitions (DRAFT -> ACTIVE -> COMPLETED). Illegal status tampering is blocked at the gateway with 409 Conflict.',
-      tag: 'WORKFLOW ENGINE',
-      tech: 'Enforced State Guard',
+      icon: Lock,
+      title: 'Role-Based Access Control',
+      description: 'Strict hierarchical clearances across ADMIN, MANAGER, and USER roles enforced at API route gateways and database operations.',
     },
     {
       icon: Activity,
-      title: 'Real-Time Threat Radar',
-      desc: 'Live telemetry classification across CRITICAL, HIGH, MEDIUM, and LOW severity threats with real-time incident resolution workflows.',
-      tag: 'TELEMETRY',
-      tech: 'Indexed Server-Side Filters',
+      title: 'Real-Time Security Events',
+      description: 'Dynamic threat telemetry with severity triage (CRITICAL, HIGH, MEDIUM, LOW) and immediate incident response workflows.',
     },
     {
-      icon: Terminal,
-      title: 'Tamper-Evident Audit Ledger',
-      desc: 'Cryptographic non-repudiation logging for all administrative events, user provisioning, access revocations, and campaign mutations.',
-      tag: 'COMPLIANCE',
-      tech: 'Immutable Audit Log',
+      icon: ScrollText,
+      title: 'Full Audit Trail',
+      description: 'Immutable, tamper-evident audit logging for user provisioning, campaign lifecycle changes, and administrative actions.',
+    },
+  ];
+
+  const steps = [
+    {
+      step: '01',
+      title: 'Authenticate',
+      description: 'Operatives authenticate securely via bcrypt-hashed credentials and receive a signed JWT with embedded RBAC claims.',
+    },
+    {
+      step: '02',
+      title: 'Scoped by Tenant',
+      description: 'Every database query and mutation is mathematically locked to req.user.tenantId, preventing unauthorized enumeration.',
+    },
+    {
+      step: '03',
+      title: 'Full Audit Trail',
+      description: 'Critical events and deterministic state transitions are recorded into an append-only ledger for non-repudiation.',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#06090E] text-slate-100 flex flex-col relative overflow-hidden font-sans selection:bg-sky-500 selection:text-white">
-      {/* 3D Background Canvas (Masked to Hero Section) */}
-      <Cyber3DScene />
-
-      {/* Cyber Grid Pattern Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:32px_32px] opacity-20 pointer-events-none z-0" />
-
-      {/* Ambient Radial Glowing Orbs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none z-0" />
-      <div className="absolute top-1/3 left-1/4 w-[400px] h-[300px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
-
-      {/* Top Navigation */}
-      <header className="relative z-20 max-w-7xl w-full mx-auto px-6 h-20 flex items-center justify-between border-b border-slate-800/60 backdrop-blur-xl bg-[#06090E]/70 sticky top-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-950/50">
-            <Shield className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="font-bold text-base tracking-wider text-white uppercase">
-              Deep Trace
+    <div className="min-h-screen bg-[#080C14] text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+      {/* 1. Sticky Navigation Bar */}
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-300 border-b ${
+          scrolled
+            ? 'bg-[#080C14]/90 backdrop-blur-md border-slate-800/80 shadow-lg shadow-black/40'
+            : 'bg-transparent border-slate-800/30'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+              <Shield className="w-4 h-4" />
             </div>
-            <div className="text-[10px] tracking-widest text-sky-400 uppercase font-mono">
-              Cybernetics
-            </div>
-          </div>
-        </div>
-
-        <nav className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-wider text-slate-400">
-          <a href="#features" className="hover:text-sky-400 transition-colors">
-            Capabilities
-          </a>
-          <a href="#simulator" className="hover:text-sky-400 transition-colors">
-            Isolation Engine
-          </a>
-          <a href="#metrics" className="hover:text-sky-400 transition-colors">
-            Telemetry
-          </a>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <Link to="/login">
-            <Button size="sm" className="bg-sky-600 hover:bg-sky-500 text-xs font-semibold px-4.5 py-2 shadow-md shadow-sky-900/30">
-              Access Console <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-            </Button>
+            <span className="font-bold text-sm tracking-wider uppercase text-white">
+              Deep Trace <span className="text-sky-400 font-mono text-xs">SOC</span>
+            </span>
           </Link>
+
+          <nav className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-wider text-slate-400">
+            <a href="#features" className="hover:text-sky-400 transition-colors">
+              Product
+            </a>
+            <a href="#how-it-works" className="hover:text-sky-400 transition-colors">
+              Security
+            </a>
+            <Link to="/login" className="hover:text-sky-400 transition-colors">
+              Login
+            </Link>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md shadow-sky-900/30 transition-all cursor-pointer"
+            >
+              Sign In
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 pt-16 pb-24 max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono mb-8 backdrop-blur-md shadow-lg shadow-sky-950/40">
-          <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-          NEXT-GEN MULTI-TENANT DEFENSE PLATFORM • v2.4 LIVE
-        </div>
+      {/* 2. Hero Section (Cyber3DScene renders strictly inside this container) */}
+      <section className="relative overflow-hidden border-b border-slate-800/80 pt-20 pb-28 md:pt-28 md:pb-36 flex items-center">
+        {/* Animated Threat Mesh Canvas */}
+        <Cyber3DScene className="absolute inset-0 w-full h-full pointer-events-none z-0" />
 
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.12]">
-          Unified Security Operations &{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-400">
-            Tenant Isolation
-          </span>
-        </h1>
+        {/* Contrast Gradient Overlays for High Legibility on Mobile & Desktop */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#080C14]/70 via-[#080C14]/85 to-[#080C14] pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#080C14_90%)] pointer-events-none z-10" />
 
-        <p className="mt-6 text-sm sm:text-base md:text-lg text-slate-300/90 max-w-2xl leading-relaxed font-normal">
-          Enterprise cyber-defense infrastructure designed for defense contractors and MSSPs.
-          Featuring cryptographic RBAC, threat campaign lifecycle automation, and verified zero-trust multi-tenancy.
-        </p>
+        <div className="relative z-20 max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono mb-6"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Cryptographic Multi-Tenancy Architecture
+          </motion.div>
 
-        {/* CTA Buttons */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
-          <Link to="/login">
-            <Button
-              size="lg"
-              className="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-8 py-3 shadow-xl shadow-sky-500/25 text-sm"
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight"
+          >
+            Multi-tenant security operations, built for{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400">
+              zero-trust from day one
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-6 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed"
+          >
+            Cryptographically isolated workspace boundaries, deterministic campaign state machines, and immutable audit ledgers designed for modern enterprise defense.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-8 flex justify-center"
+          >
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-sm shadow-xl shadow-sky-900/30 hover:shadow-sky-500/20 transition-all cursor-pointer"
             >
-              Launch Operations Console <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-          <a href="#features">
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-slate-700/80 bg-slate-900/50 backdrop-blur-md text-slate-300 hover:bg-slate-800 text-sm px-6 py-3"
-            >
-              Explore Architecture
-            </Button>
-          </a>
-        </div>
-
-        {/* Live Metrics Ticker Bar */}
-        <div id="metrics" className="mt-16 w-full max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-slate-800/80">
-          <div className="p-4 rounded-xl bg-[#0B0F17]/80 border border-slate-800/80 backdrop-blur-md">
-            <div className="text-2xl font-bold font-mono text-sky-400">100%</div>
-            <div className="text-[11px] text-slate-400 uppercase font-mono mt-1">Tenant Isolation</div>
-          </div>
-          <div className="p-4 rounded-xl bg-[#0B0F17]/80 border border-slate-800/80 backdrop-blur-md">
-            <div className="text-2xl font-bold font-mono text-emerald-400">0.00%</div>
-            <div className="text-[11px] text-slate-400 uppercase font-mono mt-1">Cross-Data Leakage</div>
-          </div>
-          <div className="p-4 rounded-xl bg-[#0B0F17]/80 border border-slate-800/80 backdrop-blur-md">
-            <div className="text-2xl font-bold font-mono text-amber-400">4-Stage</div>
-            <div className="text-[11px] text-slate-400 uppercase font-mono mt-1">Campaign Lifecycle</div>
-          </div>
-          <div className="p-4 rounded-xl bg-[#0B0F17]/80 border border-slate-800/80 backdrop-blur-md">
-            <div className="text-2xl font-bold font-mono text-indigo-400">Immutable</div>
-            <div className="text-[11px] text-slate-400 uppercase font-mono mt-1">Audit Ledger</div>
-          </div>
+              Sign In to Console <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* Capabilities Section */}
-      <section id="features" className="relative z-10 max-w-7xl w-full mx-auto px-6 py-24 border-t border-slate-800/80 bg-[#06090E]/90 backdrop-blur-sm">
+      {/* 3. Feature Highlights (3–4 Cards Grid) */}
+      <section id="features" className="py-24 px-6 max-w-7xl mx-auto w-full relative z-20">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="text-xs font-mono uppercase tracking-widest text-sky-400 mb-2">
-            Defense Capabilities
-          </div>
-          <h2 className="text-3xl font-bold text-white tracking-tight">
-            Engineered for High-Assurance Security Operations
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            Enterprise Defense Architecture
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-3 leading-relaxed">
-            Every layer from the API gateway to database queries is bound by strict zero-trust principles.
+          <p className="mt-3 text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Engineered from the database layer to the API gateway to prevent cross-tenant enumeration and state mutation.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {capabilities.map((c, i) => {
-            const Icon = c.icon;
+          {features.map((feat, idx) => {
+            const Icon = feat.icon;
             return (
-              <div
-                key={i}
-                className="bg-[#0B0F17] border border-slate-800 hover:border-sky-500/50 rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-sky-500/10 flex flex-col justify-between group"
+              <motion.div
+                key={feat.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="bg-[#0B101B] border border-slate-800/80 hover:border-sky-500/40 p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl hover:shadow-sky-950/20"
               >
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-mono uppercase text-sky-400 font-semibold tracking-wider">
-                    {c.tag}
-                  </span>
-                  <h3 className="text-base font-bold text-slate-100 mt-1 mb-2">
-                    {c.title}
-                  </h3>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                    {c.desc}
-                  </p>
+                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 mb-5 group-hover:scale-110 transition-transform">
+                  <Icon className="w-5 h-5" />
                 </div>
-                <div className="pt-3 border-t border-slate-800/80">
-                  <span className="text-[10px] font-mono text-slate-400 block truncate">
-                    {c.tech}
-                  </span>
-                </div>
-              </div>
+                <h3 className="text-base font-semibold text-white tracking-tight mb-2">
+                  {feat.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {feat.description}
+                </p>
+              </motion.div>
             );
           })}
         </div>
       </section>
 
-      {/* Interactive Live Multi-Tenant Query Simulator */}
-      <section id="simulator" className="relative z-10 max-w-5xl w-full mx-auto px-6 py-20 border-t border-slate-800/80">
-        <div className="bg-[#0B0F17] border border-slate-800 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="text-xs font-mono uppercase tracking-widest text-sky-400 font-semibold">
-              Interactive Architecture Proof
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-2">
-              Live Tenant Query Boundary Simulator
+      {/* 4. "How It Works" Trust Strip */}
+      <section id="how-it-works" className="py-20 px-6 border-t border-slate-800/80 bg-[#06090E]/60 relative z-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-xl mx-auto mb-14">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              How Deep Trace Enforces Isolation
             </h2>
-            <p className="text-xs text-slate-400 mt-2">
-              Select an authenticated tenant identity below to inspect how the API Gateway and Prisma ORM scope database queries.
+            <p className="mt-2 text-xs text-slate-400">
+              Three-stage non-bypassable verification pipeline executed on every operation.
             </p>
           </div>
 
-          {/* Tenant Switcher Buttons */}
-          <div className="flex justify-center gap-3 mb-6">
-            <button
-              onClick={() => setActiveSimTenant('apex')}
-              className={`px-4 py-2 rounded-xl text-xs font-mono font-semibold transition-all cursor-pointer ${
-                activeSimTenant === 'apex'
-                  ? 'bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/25'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Tenant A: Apex Defense Systems
-            </button>
-            <button
-              onClick={() => setActiveSimTenant('sentinel')}
-              className={`px-4 py-2 rounded-xl text-xs font-mono font-semibold transition-all cursor-pointer ${
-                activeSimTenant === 'sentinel'
-                  ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Tenant B: Sentinel Cybernetics
-            </button>
-          </div>
-
-          {/* Simulated Query & Defense Window */}
-          <div className="bg-[#05080E] border border-slate-800 rounded-xl p-5 font-mono text-xs text-slate-300 overflow-x-auto shadow-inner">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-[11px] text-slate-400">
-              <span className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span className="ml-2 text-slate-300">
-                  {activeSimTenant === 'apex' ? 'Apex Defense Session' : 'Sentinel Cybernetics Session'}
-                </span>
-              </span>
-              <span className="text-emerald-400">ISOLATION LOCKED</span>
-            </div>
-
-            <div className="mt-4 space-y-2">
-              <div className="text-slate-400">
-                # 1. Verified JWT Claims (Derived purely from token signature)
-              </div>
-              <div className="text-sky-300">
-                {activeSimTenant === 'apex'
-                  ? '{ userId: "usr_apex_admin", tenantId: "apex-defense-uuid", role: "ADMIN" }'
-                  : '{ userId: "usr_sentinel_admin", tenantId: "sentinel-cyber-uuid", role: "ADMIN" }'}
-              </div>
-
-              <div className="text-slate-400 pt-2">
-                # 2. Scoped Database Query (Zero reliance on client params)
-              </div>
-              <div className="text-emerald-300">
-                {activeSimTenant === 'apex'
-                  ? 'SELECT * FROM campaigns WHERE tenant_id = \'apex-defense-uuid\' AND status = \'ACTIVE\';'
-                  : 'SELECT * FROM campaigns WHERE tenant_id = \'sentinel-cyber-uuid\' AND status = \'ACTIVE\';'}
-              </div>
-
-              <div className="text-slate-400 pt-2">
-                # 3. Cross-Tenant Attempt: Requesting other tenant\'s campaign ID 201
-              </div>
-              <div className="text-rose-400">
-                {activeSimTenant === 'apex'
-                  ? 'GET /api/campaigns/sentinel-201 -> 404 NOT FOUND (Anti-Enumeration Guard)'
-                  : 'GET /api/campaigns/apex-101 -> 404 NOT FOUND (Anti-Enumeration Guard)'}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link to="/login">
-              <Button size="md" className="bg-sky-600 hover:bg-sky-500 font-semibold px-6">
-                Test In Security Portal <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {steps.map((st, i) => (
+              <motion.div
+                key={st.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="relative bg-[#0B101B] border border-slate-800 p-6 rounded-xl"
+              >
+                <div className="text-2xl font-mono font-bold text-sky-400/80 mb-3">
+                  {st.step}
+                </div>
+                <h3 className="text-sm font-semibold text-slate-100 mb-2">
+                  {st.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {st.description}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-800/80 bg-[#06090E] py-8 text-center text-xs text-slate-400 font-mono">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>© 2026 Deep Trace Cybernetics. All rights reserved.</div>
-          <div className="flex items-center gap-2 text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            All Tenant Defenses Operational
+      {/* 5. Minimal Footer */}
+      <footer className="mt-auto border-t border-slate-800/80 py-8 px-6 bg-[#080C14] text-center text-xs text-slate-400 font-mono">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <span className="font-semibold text-slate-300">Deep Trace Cybernetics</span> — Multi-Tenant Security Platform
+          </div>
+          <div className="text-slate-400">
+            Node.js • Express • PostgreSQL • Prisma • React • Tailwind CSS
           </div>
         </div>
       </footer>

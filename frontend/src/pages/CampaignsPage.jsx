@@ -299,8 +299,12 @@ export function CampaignsPage() {
                 </tr>
               ) : campaigns.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500">
-                    No campaigns found matching criteria.
+                  <td colSpan={5} className="py-16 text-center text-slate-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <FolderKanban className="w-8 h-8 text-slate-600 stroke-[1.5]" />
+                      <p className="text-sm font-semibold text-slate-300">No campaigns found</p>
+                      <p className="text-xs text-slate-500 max-w-sm">No campaigns match your active search filters or tenant roster.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (

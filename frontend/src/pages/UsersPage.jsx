@@ -260,8 +260,12 @@ export function UsersPage() {
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500">
-                    No users found matching search criteria.
+                  <td colSpan={5} className="py-16 text-center text-slate-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Users className="w-8 h-8 text-slate-600 stroke-[1.5]" />
+                      <p className="text-sm font-semibold text-slate-300">No operatives found</p>
+                      <p className="text-xs text-slate-500 max-w-sm">No tenant operatives matched the specified search identity or role clearance.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (

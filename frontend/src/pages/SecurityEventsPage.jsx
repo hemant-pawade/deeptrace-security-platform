@@ -234,8 +234,12 @@ export function SecurityEventsPage() {
                 </tr>
               ) : events.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-500">
-                    No security events found.
+                  <td colSpan={7} className="py-16 text-center text-slate-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <ShieldAlert className="w-8 h-8 text-slate-600 stroke-[1.5]" />
+                      <p className="text-sm font-semibold text-slate-300">No security events found</p>
+                      <p className="text-xs text-slate-500 max-w-sm">No security incidents match the selected severity and status filters.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (

@@ -1,12 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const routes = require('./routes');
+const config = require('./config');
 const { errorHandler } = require('./middleware/error.middleware');
 
 const app = express();
 
 // Security and parser middleware
-app.use(cors());
+app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

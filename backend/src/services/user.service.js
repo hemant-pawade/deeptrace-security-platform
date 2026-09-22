@@ -38,9 +38,9 @@ class UserService {
   }
 
   async createUser(tenantId, actorUser, data) {
-    const existing = await userRepository.findByEmailAndTenant(data.email, tenantId);
+    const existing = await userRepository.findByEmail(data.email);
     if (existing) {
-      const error = new Error(`User with email '${data.email}' already exists in this tenant`);
+      const error = new Error(`User with email '${data.email}' is already registered in the platform.`);
       error.statusCode = 409;
       error.errors = { email: 'Email is already registered' };
       throw error;
@@ -75,6 +75,17 @@ class UserService {
     }
 
     const updatePayload = {};
+    if (data.email && data.email !== existing.email) {
+      const emailConflict = await userRepository.findByEmail(data.email);
+      if (emailConflict) {
+        const error = new Error(`User with email '${data.email}' is already registered in the platform.`);
+        error.statusCode = 409;
+        error.errors = { email: 'Email is already registered' };
+        throw error;
+      }
+      updatePayload.email = data.email;
+    }
+
     if (data.full_name) updatePayload.full_name = data.full_name;
     if (data.role) updatePayload.role = data.role;
     if (data.password) {

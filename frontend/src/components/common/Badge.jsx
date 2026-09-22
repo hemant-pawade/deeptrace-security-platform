@@ -26,7 +26,7 @@ export function Badge({ children, variant, className = '' }) {
       case 'DRAFT':
         return 'bg-slate-500/15 text-slate-400 border-slate-500/30';
       case 'COMPLETED':
-        return 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30';
+        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
       case 'CANCELLED':
         return 'bg-rose-500/15 text-rose-400 border-rose-500/30';
 

@@ -96,12 +96,6 @@ class CampaignRepository {
   }
 
   async updateCampaign(id, tenantId, data) {
-    // Only update if matching both id AND tenant_id
-    const campaign = await this.findByIdAndTenant(id, tenantId);
-    if (!campaign) {
-      return null;
-    }
-
     const updateData = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
@@ -109,22 +103,12 @@ class CampaignRepository {
     if (data.start_date !== undefined) updateData.start_date = data.start_date ? new Date(data.start_date) : null;
     if (data.end_date !== undefined) updateData.end_date = data.end_date ? new Date(data.end_date) : null;
 
-    return await prisma.campaign.update({
-      where: { id },
+    const result = await prisma.campaign.updateMany({
+      where: { id, tenant_id: tenantId },
       data: updateData,
-      include: {
-        creator: {
-          select: { id: true, full_name: true, email: true },
-        },
-        assigned_users: {
-          include: {
-            user: {
-              select: { id: true, full_name: true, email: true, role: true },
-            },
-          },
-        },
-      },
     });
+    if (result.count === 0) return null;
+    return await this.findByIdAndTenant(id, tenantId);
   }
 
   async deleteCampaign(id, tenantId) {

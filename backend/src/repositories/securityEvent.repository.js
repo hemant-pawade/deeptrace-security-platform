@@ -62,19 +62,17 @@ class SecurityEventRepository {
   }
 
   async updateEvent(id, tenantId, data) {
-    const existing = await this.findByIdAndTenant(id, tenantId);
-    if (!existing) {
-      return null;
-    }
+    const updateData = {};
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.severity !== undefined) updateData.severity = data.severity;
+    if (data.description !== undefined) updateData.description = data.description;
 
-    return await prisma.securityEvent.update({
-      where: { id },
-      data: {
-        ...(data.status && { status: data.status }),
-        ...(data.severity && { severity: data.severity }),
-        ...(data.description && { description: data.description }),
-      },
+    const result = await prisma.securityEvent.updateMany({
+      where: { id, tenant_id: tenantId },
+      data: updateData,
     });
+    if (result.count === 0) return null;
+    return await this.findByIdAndTenant(id, tenantId);
   }
 }
 

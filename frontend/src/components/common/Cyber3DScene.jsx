@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react';
  * Designed with the aesthetic of high-end defense platforms (CrowdStrike, Darktrace, Cloudflare Radar)
  * Features dynamic interconnected security nodes, live packet pulses, and interactive cursor magnetic field.
  */
-export function Cyber3DScene() {
+export function Cyber3DScene({ className = 'absolute inset-0 w-full h-full pointer-events-none z-0' }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -15,11 +15,18 @@ export function Cyber3DScene() {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    const updateDimensions = () => {
+      const parent = canvas.parentElement;
+      return {
+        w: (canvas.width = parent ? parent.clientWidth : window.innerWidth),
+        h: (canvas.height = parent ? parent.clientHeight : window.innerHeight),
+      };
+    };
+
+    let { w: width, h: height } = updateDimensions();
 
     // Particle nodes configuration
-    const NODE_COUNT = Math.floor(Math.min(width, 1600) / 14); // Responsive density
+    const NODE_COUNT = Math.floor(Math.min(width, 1600) / 16);
     const MAX_DISTANCE = 130;
     const MOUSE_RADIUS = 160;
 
@@ -42,7 +49,6 @@ export function Cyber3DScene() {
         this.alpha = this.baseAlpha;
         this.pulse = Math.random() * Math.PI * 2;
         this.pulseSpeed = 0.02 + Math.random() * 0.03;
-        // Diverse cyber security node types: Core cyan, Alert amber, Shield indigo
         const rand = Math.random();
         if (rand > 0.85) {
           this.color = '56, 189, 248'; // Bright Cyan
@@ -60,15 +66,12 @@ export function Cyber3DScene() {
         this.x += this.vx;
         this.y += this.vy;
 
-        // Bounce gently off bounds
         if (this.x < 0 || this.x > width) this.vx *= -1;
         if (this.y < 0 || this.y > height) this.vy *= -1;
 
-        // Pulse glow
         this.pulse += this.pulseSpeed;
         this.alpha = this.baseAlpha + Math.sin(this.pulse) * 0.25;
 
-        // Mouse magnetic repulsion / interaction
         if (mouse.active) {
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
@@ -87,7 +90,6 @@ export function Cyber3DScene() {
         ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
         ctx.fill();
 
-        // Extra radar ping ring on key security nodes
         if (this.isKeyNode) {
           const pingRadius = this.radius + (Math.sin(this.pulse) + 1) * 3.5;
           ctx.beginPath();
@@ -101,7 +103,6 @@ export function Cyber3DScene() {
 
     const nodes = Array.from({ length: NODE_COUNT }, () => new SecurityNode());
 
-    // Simulated data packets traveling along lines
     const packets = [];
     const createPacket = (nodeA, nodeB) => {
       packets.push({
@@ -118,13 +119,15 @@ export function Cyber3DScene() {
     let packetTimer = 0;
 
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      const dims = updateDimensions();
+      width = dims.w;
+      height = dims.h;
     };
 
     const handleMouseMove = (e) => {
-      mouse.targetX = e.clientX;
-      mouse.targetY = e.clientY;
+      const rect = canvas.getBoundingClientRect();
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
       mouse.active = true;
     };
 
@@ -137,14 +140,11 @@ export function Cyber3DScene() {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     const render = () => {
-      // Clear with dark cyber fade trail
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth mouse follow
       mouse.x += (mouse.targetX - mouse.x) * 0.1;
       mouse.y += (mouse.targetY - mouse.y) * 0.1;
 
-      // Draw subtle interactive cursor radar field
       if (mouse.active) {
         const gradient = ctx.createRadialGradient(
           mouse.x,
@@ -156,20 +156,18 @@ export function Cyber3DScene() {
         );
         gradient.addColorStop(0, 'rgba(56, 189, 248, 0.07)');
         gradient.addColorStop(0.7, 'rgba(56, 189, 248, 0.02)');
-        gradient.addColorStop(1, 'rgba(6, 9, 14, 0)');
+        gradient.addColorStop(1, 'rgba(8, 12, 20, 0)');
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, MOUSE_RADIUS, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Update and connect nodes
       for (let i = 0; i < nodes.length; i++) {
         const nodeA = nodes[i];
         nodeA.update();
         nodeA.draw();
 
-        // Connect with nearby nodes
         for (let j = i + 1; j < nodes.length; j++) {
           const nodeB = nodes[j];
           const dx = nodeA.x - nodeB.x;
@@ -185,14 +183,12 @@ export function Cyber3DScene() {
             ctx.lineWidth = 0.85;
             ctx.stroke();
 
-            // Occasionally spawn a traveling security packet along connection
             if (packetTimer % 45 === 0 && Math.random() < 0.03 && packets.length < 25) {
               createPacket(nodeA, nodeB);
             }
           }
         }
 
-        // Connect with mouse cursor if close
         if (mouse.active) {
           const dx = nodeA.x - mouse.x;
           const dy = nodeA.y - mouse.y;
@@ -209,7 +205,6 @@ export function Cyber3DScene() {
         }
       }
 
-      // Render traveling data packets
       packetTimer++;
       for (let k = packets.length - 1; k >= 0; k--) {
         const p = packets[k];
@@ -227,7 +222,7 @@ export function Cyber3DScene() {
         ctx.shadowColor = 'rgba(56, 189, 248, 1)';
         ctx.shadowBlur = 6;
         ctx.fill();
-        ctx.shadowBlur = 0; // reset
+        ctx.shadowBlur = 0;
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -246,7 +241,7 @@ export function Cyber3DScene() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      className={className}
     />
   );
 }
