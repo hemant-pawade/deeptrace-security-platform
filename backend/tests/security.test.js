@@ -289,6 +289,99 @@ async function runTests() {
     assert(auditRes.status === 200, 'ADMIN can fetch tenant audit logs');
     assert(auditRes.data.data.length > 0, 'Audit log contains recorded security and lifecycle events');
 
+    // -------------------------------------------------------------------------
+    // TEST 7: Operative Role Provisioning & Updates (Bug 1 Regression Test)
+    // -------------------------------------------------------------------------
+    console.log('\n[7] Testing Operative Role Provisioning & Updates...');
+    const newOperativeRes = await request('/users', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apexAdminToken}` },
+      body: JSON.stringify({
+        email: `secops_${Date.now()}@apex.com`,
+        full_name: 'Cipher Operative',
+        role: 'MANAGER',
+        password: 'Password123!',
+      }),
+    });
+    assert(newOperativeRes.status === 201, 'ADMIN can provision operative');
+    assert(newOperativeRes.data.role === 'MANAGER', 'Operative was provisioned with MANAGER role (not overwritten)');
+    const createdUserId = newOperativeRes.data.id;
+
+    // Test updating role
+    const updateRoleRes = await request(`/users/${createdUserId}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${apexAdminToken}` },
+      body: JSON.stringify({
+        role: 'ADMIN',
+      }),
+    });
+    assert(updateRoleRes.status === 200 && updateRoleRes.data.role === 'ADMIN', 'ADMIN can promote operative role to ADMIN');
+
+    // -------------------------------------------------------------------------
+    // TEST 8: Dashboard Activity RBAC Confidentiality (Bug 2 Regression Test)
+    // -------------------------------------------------------------------------
+    console.log('\n[8] Testing Dashboard Activity RBAC Confidentiality...');
+    const userActivityRes = await request('/dashboard/recent-activity', {
+      headers: { Authorization: `Bearer ${apexUserToken}` },
+    });
+    assert(userActivityRes.status === 200, 'USER role can access dashboard recent activity');
+    assert(
+      Array.isArray(userActivityRes.data.recentAudits) && userActivityRes.data.recentAudits.length === 0,
+      'USER role receives empty audit trail (Zero administrative audit leak to USER)'
+    );
+
+    const adminActivityRes = await request('/dashboard/recent-activity', {
+      headers: { Authorization: `Bearer ${apexAdminToken}` },
+    });
+    assert(
+      adminActivityRes.data.recentAudits.length > 0,
+      'ADMIN role successfully receives recent audits'
+    );
+
+    // -------------------------------------------------------------------------
+    // TEST 9: Date Form Handling (Bug 3 Regression Test)
+    // -------------------------------------------------------------------------
+    console.log('\n[9] Testing Empty Date Field Serialization...');
+    const emptyDatesCampRes = await request('/campaigns', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apexAdminToken}` },
+      body: JSON.stringify({
+        name: 'Empty Dates Campaign',
+        start_date: '',
+        end_date: '',
+      }),
+    });
+    assert(emptyDatesCampRes.status === 201, 'Creating campaign with empty date strings converts to null and succeeds');
+
+    // -------------------------------------------------------------------------
+    // TEST 10: Campaign Terminal State Assignment Lock (Bug 5 Regression Test)
+    // -------------------------------------------------------------------------
+    console.log('\n[10] Testing Campaign Terminal State Protection...');
+    const completedCampId = completedCamp.id;
+    const assignTerminalRes = await request(`/campaigns/${completedCampId}/users`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apexAdminToken}` },
+      body: JSON.stringify({ user_id: createdUserId }),
+    });
+    assert(
+      assignTerminalRes.status === 409,
+      'Assigning operative to a COMPLETED campaign returns 409 Conflict'
+    );
+
+    // -------------------------------------------------------------------------
+    // TEST 11: Foreign Key Protection on User Deletion (Bug 4 Regression Test)
+    // -------------------------------------------------------------------------
+    console.log('\n[11] Testing Foreign Key Integrity on User Deletion...');
+    // Apex Admin user (author of seed campaigns)
+    const deleteAuthorRes = await request(`/users/${apexLoginRes.data.user.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${apexAdminToken}` },
+    });
+    assert(
+      deleteAuthorRes.status === 400 || deleteAuthorRes.status === 409,
+      'Deleting active admin or author of campaigns returns clean 400/409 Conflict (no 500 crash)'
+    );
+
     console.log('\n======================================================');
     console.log(`TEST RESULTS: ${passed} PASSED, ${failed} FAILED`);
     console.log('======================================================\n');

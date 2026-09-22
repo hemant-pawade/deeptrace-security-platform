@@ -5,7 +5,7 @@ const createSecurityEventSchema = z.object({
   severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).default('LOW'),
   status: z.enum(['OPEN', 'RESOLVED']).default('OPEN'),
   description: z.string().trim().min(5, 'Description must be at least 5 characters'),
-  source_ip: z.string().trim().optional().nullable(),
+  source_ip: z.string().trim().optional().nullable().transform((v) => (v === '' ? null : v)),
 });
 
 const updateSecurityEventSchema = z.object({

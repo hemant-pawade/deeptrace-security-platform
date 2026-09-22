@@ -50,23 +50,27 @@ class DashboardRepository {
     };
   }
 
-  async getRecentActivity(tenantId, limit = 10) {
+  async getRecentActivity(tenantId, userContext, limit = 10) {
+    const isUser = userContext?.role === 'USER';
+
     const [recentEvents, recentAudits] = await Promise.all([
       prisma.securityEvent.findMany({
         where: { tenant_id: tenantId },
         take: limit,
         orderBy: { created_at: 'desc' },
       }),
-      prisma.auditLog.findMany({
-        where: { tenant_id: tenantId },
-        take: limit,
-        orderBy: { created_at: 'desc' },
-        include: {
-          user: {
-            select: { id: true, full_name: true, email: true },
-          },
-        },
-      }),
+      !isUser
+        ? prisma.auditLog.findMany({
+            where: { tenant_id: tenantId },
+            take: limit,
+            orderBy: { created_at: 'desc' },
+            include: {
+              user: {
+                select: { id: true, full_name: true, email: true },
+              },
+            },
+          })
+        : Promise.resolve([]),
     ]);
 
     return {

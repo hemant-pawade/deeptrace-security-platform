@@ -151,6 +151,12 @@ class CampaignService {
       throw error;
     }
 
+    if (['COMPLETED', 'CANCELLED'].includes(campaign.status)) {
+      const error = new Error(`Cannot assign operatives: Campaign is ${campaign.status.toLowerCase()} (terminal).`);
+      error.statusCode = 409;
+      throw error;
+    }
+
     // Verify target user belongs to the same tenant
     const targetUser = await userRepository.findByIdAndTenant(targetUserId, tenantId);
     if (!targetUser) {
@@ -186,6 +192,12 @@ class CampaignService {
     if (!campaign) {
       const error = new Error('Campaign not found');
       error.statusCode = 404;
+      throw error;
+    }
+
+    if (['COMPLETED', 'CANCELLED'].includes(campaign.status)) {
+      const error = new Error(`Cannot remove operatives: Campaign is ${campaign.status.toLowerCase()} (terminal).`);
+      error.statusCode = 409;
       throw error;
     }
 

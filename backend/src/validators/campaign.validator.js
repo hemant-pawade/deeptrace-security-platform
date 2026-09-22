@@ -4,16 +4,44 @@ const createCampaignSchema = z.object({
   name: z.string().trim().min(2, 'Campaign name must be at least 2 characters'),
   description: z.string().trim().optional(),
   status: z.enum(['DRAFT', 'ACTIVE', 'COMPLETED', 'CANCELLED']).default('DRAFT'),
-  start_date: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}/)).optional().nullable(),
-  end_date: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}/)).optional().nullable(),
+  start_date: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/))
+    .or(z.literal(''))
+    .optional()
+    .nullable()
+    .transform((v) => (v === '' ? null : v)),
+  end_date: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/))
+    .or(z.literal(''))
+    .optional()
+    .nullable()
+    .transform((v) => (v === '' ? null : v)),
 });
 
 const updateCampaignSchema = z.object({
   name: z.string().trim().min(2).optional(),
   description: z.string().trim().optional().nullable(),
   status: z.enum(['DRAFT', 'ACTIVE', 'COMPLETED', 'CANCELLED']).optional(),
-  start_date: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}/)).optional().nullable(),
-  end_date: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}/)).optional().nullable(),
+  start_date: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/))
+    .or(z.literal(''))
+    .optional()
+    .nullable()
+    .transform((v) => (v === '' ? null : v)),
+  end_date: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/))
+    .or(z.literal(''))
+    .optional()
+    .nullable()
+    .transform((v) => (v === '' ? null : v)),
 });
 
 const campaignQuerySchema = z.object({

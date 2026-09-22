@@ -511,17 +511,33 @@ export function CampaignsPage() {
             </label>
             <select
               value={formData.status}
+              disabled={['COMPLETED', 'CANCELLED'].includes(activeCampaign?.status)}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full bg-[#090D16] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-sky-500 font-mono"
+              className="w-full bg-[#090D16] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-sky-500 font-mono disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <option value="DRAFT">DRAFT</option>
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="COMPLETED">COMPLETED</option>
-              <option value="CANCELLED">CANCELLED</option>
+              {activeCampaign?.status === 'DRAFT' && (
+                <>
+                  <option value="DRAFT">DRAFT (Current)</option>
+                  <option value="ACTIVE">ACTIVE (Launch)</option>
+                  <option value="CANCELLED">CANCELLED (Abort)</option>
+                </>
+              )}
+              {activeCampaign?.status === 'ACTIVE' && (
+                <>
+                  <option value="ACTIVE">ACTIVE (Current)</option>
+                  <option value="COMPLETED">COMPLETED (Conclude)</option>
+                  <option value="CANCELLED">CANCELLED (Abort)</option>
+                </>
+              )}
+              {['COMPLETED', 'CANCELLED'].includes(activeCampaign?.status) && (
+                <option value={activeCampaign.status}>{activeCampaign.status} (Terminal / Immutable)</option>
+              )}
             </select>
             <p className="text-[11px] text-slate-400 mt-1">
-              Allowed: DRAFT &rarr; ACTIVE, CANCELLED | ACTIVE &rarr; COMPLETED, CANCELLED.
-              Terminal statuses cannot be reopened.
+              State transitions: DRAFT &rarr; ACTIVE, CANCELLED | ACTIVE &rarr; COMPLETED, CANCELLED.
+              {['COMPLETED', 'CANCELLED'].includes(activeCampaign?.status) && (
+                <span className="text-amber-400 block mt-0.5">Terminal status: this campaign cannot be transitioned.</span>
+              )}
             </p>
           </div>
 

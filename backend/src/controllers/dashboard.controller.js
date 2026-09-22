@@ -13,7 +13,7 @@ class DashboardController {
 
   async getRecentActivity(req, res, next) {
     try {
-      const activity = await dashboardService.getRecentActivity(req.tenantId);
+      const activity = await dashboardService.getRecentActivity(req.tenantId, req.user);
       return successResponse(res, activity, 200);
     } catch (error) {
       next(error);

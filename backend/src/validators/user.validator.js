@@ -12,7 +12,12 @@ const createUserSchema = z.object({
 const updateUserSchema = z.object({
   full_name: z.string().trim().min(2).optional(),
   role: z.enum(['ADMIN', 'MANAGER', 'USER']).optional(),
-  password: z.string().min(8).optional(),
+  password: z
+    .string()
+    .min(8)
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? undefined : v)),
 });
 
 const userQuerySchema = z.object({

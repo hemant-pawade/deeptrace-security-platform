@@ -22,6 +22,15 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Handle Prisma foreign key constraint violations (P2003)
+  if (err.code === 'P2003') {
+    return res.status(409).json({
+      success: false,
+      message: 'Operation conflict: Resource is referenced by other records (foreign key constraint).',
+      errors: {},
+    });
+  }
+
   // Handle Prisma record not found (e.g. P2025)
   if (err.code === 'P2025') {
     return res.status(404).json({

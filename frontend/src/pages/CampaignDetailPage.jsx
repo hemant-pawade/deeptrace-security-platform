@@ -214,7 +214,7 @@ export function CampaignDetailPage() {
           title="Assigned Operatives"
           description="Tenant users authorized to view or execute actions for this campaign"
           action={
-            canManageCampaigns && (
+            canManageCampaigns && !['COMPLETED', 'CANCELLED'].includes(campaign.status) && (
               <Button size="sm" onClick={() => setIsAssignOpen(true)}>
                 <UserPlus className="w-4 h-4 mr-1.5" /> Assign Operative
               </Button>
@@ -253,7 +253,7 @@ export function CampaignDetailPage() {
                     Assigned: {new Date(assignment.assigned_at).toLocaleDateString()}
                   </span>
 
-                  {canManageCampaigns && (
+                  {canManageCampaigns && !['COMPLETED', 'CANCELLED'].includes(campaign.status) && (
                     <button
                       onClick={() => handleRemoveUser(assignment.user_id)}
                       className="p-1.5 rounded hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 transition-colors"

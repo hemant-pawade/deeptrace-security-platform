@@ -5,8 +5,8 @@ class DashboardService {
     return await dashboardRepository.getMetrics(tenantId, userContext);
   }
 
-  async getRecentActivity(tenantId) {
-    return await dashboardRepository.getRecentActivity(tenantId);
+  async getRecentActivity(tenantId, userContext) {
+    return await dashboardRepository.getRecentActivity(tenantId, userContext);
   }
 }
 

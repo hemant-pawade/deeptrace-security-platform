@@ -109,6 +109,19 @@ class UserService {
       throw error;
     }
 
+    // Check if user has authored any campaigns (enforces relation integrity)
+    const prisma = require('../config/db');
+    const createdCampaigns = await prisma.campaign.count({
+      where: { created_by: id, tenant_id: tenantId },
+    });
+    if (createdCampaigns > 0) {
+      const error = new Error(
+        `Cannot delete operative ${existing.email}: user is the author of ${createdCampaigns} campaign(s). Reassign or remove campaigns first.`
+      );
+      error.statusCode = 409;
+      throw error;
+    }
+
     await userRepository.deleteUser(id, tenantId);
 
     await logAudit({

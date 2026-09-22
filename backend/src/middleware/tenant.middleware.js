@@ -17,7 +17,6 @@ const requireTenantAccess = (req, res, next) => {
   if (req.body && typeof req.body === 'object') {
     delete req.body.tenant_id;
     delete req.body.tenantId;
-    delete req.body.role; // Role must also never be spoofed
   }
 
   if (req.query && typeof req.query === 'object') {
