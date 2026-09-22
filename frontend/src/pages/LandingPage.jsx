@@ -16,8 +16,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SecurityMeshScene } from '../components/common/SecurityMeshScene';
+import { useAuth } from '../context/AuthContext';
 
 export function LandingPage() {
+  const { user, token } = useAuth();
+  const isAuthenticated = !!(token && user);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -134,17 +137,23 @@ export function LandingPage() {
             <a href="#architecture" className="hover:text-sky-400 transition-colors">
               Architecture
             </a>
-            <Link to="/login" className="hover:text-sky-400 transition-colors">
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard" className="text-sky-400 hover:text-sky-300 transition-colors font-semibold">
+                Console
+              </Link>
+            ) : (
+              <Link to="/login" className="hover:text-sky-400 transition-colors">
+                Login
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
             <Link
-              to="/login"
+              to={isAuthenticated ? '/dashboard' : '/login'}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md shadow-sky-900/30 transition-all cursor-pointer"
             >
-              Sign In to Console
+              {isAuthenticated ? 'Open Console' : 'Sign In to Console'}
             </Link>
           </div>
         </div>
@@ -199,10 +208,10 @@ export function LandingPage() {
             className="mt-8 flex justify-center"
           >
             <Link
-              to="/login"
+              to={isAuthenticated ? '/dashboard' : '/login'}
               className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-sm shadow-xl shadow-sky-900/30 hover:shadow-sky-500/20 transition-all cursor-pointer"
             >
-              Sign In to Console <ArrowRight className="w-4 h-4" />
+              {isAuthenticated ? 'Open Console' : 'Sign In to Console'} <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
         </div>
