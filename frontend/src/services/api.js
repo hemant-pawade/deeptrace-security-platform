@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+const rawBase = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+const API_BASE = rawBase.endsWith('/api') ? rawBase : (rawBase === '' ? '/api' : `${rawBase}/api`);
 
 /**
  * Enhanced fetch wrapper that attaches JWT token and normalizes responses
@@ -11,7 +12,8 @@ export async function apiFetch(endpoint, options = {}) {
     ...(options.headers || {}),
   };
 
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
+  const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${formattedEndpoint}`;
 
   const response = await fetch(url, {
     ...options,

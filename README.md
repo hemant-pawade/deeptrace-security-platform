@@ -297,4 +297,60 @@ npm test
   - Campaign transition `COMPLETED` -> `DRAFT` returns `409 Conflict`
   - Campaign transition `DRAFT` -> `ACTIVE` succeeds (`200 OK`)
   - Spoofed `tenant_id` in request payload is completely stripped and ignored in favor of verified JWT payload
-  - Immutable audit logs are written for every lifecycle event.
+- Immutable audit logs are written for every lifecycle event.
+
+---
+
+## 10. Deploying to Render (Full Stack: DB, Backend, Frontend)
+
+The repository includes a ready-to-use **`render.yaml` Blueprint** that provisions PostgreSQL, the Express API Web Service, and the Vite Static Site automatically.
+
+### Option A: One-Click Blueprint Deployment (Recommended)
+1. Go to your [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** and select **Blueprint**.
+3. Connect your GitHub repository: `https://github.com/hemant-pawade/deeptrace-security-platform`.
+4. Render will read `render.yaml` and display the 3 resources:
+   - **`deeptrace-db`**: Managed PostgreSQL Database
+   - **`deeptrace-backend`**: Node.js Web Service (auto-executes Prisma schema push & seed)
+   - **`deeptrace-frontend`**: Vite Static Site (with SPA client-side routing)
+5. Click **Apply**.
+6. Render will automatically provision the database, build & seed the backend, and deploy the frontend.
+
+---
+
+### Option B: Manual Service-by-Service Deployment on Render
+
+If you prefer deploying services individually:
+
+#### 1. PostgreSQL Database
+- Click **New +** > **PostgreSQL**.
+- Name: `deeptrace-db`.
+- Database: `deeptrace_db`.
+- User: `postgres`.
+- Copy the **Internal Database URL** (e.g., `postgresql://...`).
+
+#### 2. Backend Web Service
+- Click **New +** > **Web Service**.
+- Select your repository: `deeptrace-security-platform`.
+- **Root Directory**: `backend`
+- **Environment**: `Node`
+- **Build Command**: `npm install && npx prisma generate && npx prisma db push && node prisma/seed.js`
+- **Start Command**: `node src/server.js`
+- **Environment Variables**:
+  - `DATABASE_URL`: *(Paste the Internal Database URL from Step 1)*
+  - `JWT_SECRET`: `deeptrace_super_secret_jwt_key_2026_production_grade_security`
+  - `NODE_ENV`: `production`
+  - `CORS_ORIGIN`: `*`
+- Click **Create Web Service**. Copy the generated URL (e.g. `https://deeptrace-backend.onrender.com`).
+
+#### 3. Frontend Static Site
+- Click **New +** > **Static Site**.
+- Select your repository: `deeptrace-security-platform`.
+- **Root Directory**: `frontend`
+- **Build Command**: `npm install && npm run build`
+- **Publish Directory**: `dist`
+- **Environment Variables**:
+  - `VITE_API_URL`: `https://deeptrace-backend.onrender.com` *(Your Backend URL)*
+- **Redirects / Rewrites**:
+  - Rule already included via `frontend/public/_redirects` (`/* /index.html 200`).
+- Click **Create Static Site**.
