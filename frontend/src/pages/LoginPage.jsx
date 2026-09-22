@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, Lock, Mail, ArrowRight, ArrowLeft, Eye, EyeOff, X } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, ArrowLeft, Eye, EyeOff, X, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -23,7 +23,7 @@ export function LoginPage() {
 
     try {
       await login(email, password);
-      toast.success('Authentication verified. Welcome to Deep Trace.');
+      toast.success('Authentication verified. Access granted to SOC console.');
       navigate('/dashboard');
     } catch (err) {
       setFieldErrors(err.errors || {});
@@ -41,40 +41,41 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F1EA] flex items-center justify-center p-3 sm:p-6 lg:p-10 font-sans selection:bg-[#F5C744] selection:text-stone-900">
-      {/* Outer subtle decorative background glow */}
-      <div className="fixed top-12 left-12 w-96 h-96 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-12 right-12 w-96 h-96 bg-stone-300/30 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#080C14] text-slate-100 flex items-center justify-center p-3 sm:p-6 lg:p-10 font-sans selection:bg-sky-500 selection:text-white relative overflow-hidden">
+      {/* Ambient Cyber Lighting matching Deep Trace Landing Page */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[500px] h-[400px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none opacity-30" />
 
-      {/* Main Split Container Card matching the Nixtio Dribbble layout */}
-      <div className="w-full max-w-[1140px] bg-[#FAF8F5] rounded-[2.25rem] sm:rounded-[2.75rem] shadow-[0_25px_70px_rgba(40,30,20,0.08)] border border-[#E8E3D7] p-5 sm:p-7 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch relative z-10">
+      {/* Main Split Container Card matching the Nixtio Dribbble layout in Deep Trace Dark Cybernetics */}
+      <div className="w-full max-w-[1140px] bg-[#0B101B]/95 rounded-[2.25rem] sm:rounded-[2.75rem] shadow-[0_25px_80px_rgba(0,0,0,0.8)] border border-slate-800/90 p-5 sm:p-7 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch relative z-10 backdrop-blur-xl">
         
         {/* Left Column: Form & Presets */}
         <div className="lg:col-span-6 flex flex-col justify-between py-2 sm:py-4 px-1 sm:px-4">
           <div>
-            {/* Header Brand Pill matching "Crextio" in reference */}
+            {/* Header Brand Pill matching "Crextio" from reference */}
             <div className="flex items-center justify-between mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-stone-300/70 bg-white/90 shadow-sm text-stone-800 text-xs font-semibold tracking-wide">
-                <Shield className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
-                <span>DeepTrace</span>
-                <span className="text-stone-300">|</span>
-                <span className="text-stone-500 font-mono text-[10px]">SEC-OPS</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 shadow-sm text-sky-400 text-xs font-semibold tracking-wide">
+                <Shield className="w-3.5 h-3.5 text-sky-400 fill-sky-400/20" />
+                <span className="text-white">DeepTrace</span>
+                <span className="text-slate-600">|</span>
+                <span className="text-emerald-400 font-mono text-[10px]">SEC-OPS</span>
               </div>
 
               <Link
                 to="/"
-                className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-900 transition-colors font-medium"
+                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-sky-400 transition-colors font-mono"
               >
-                <ArrowLeft className="w-3.5 h-3.5 text-stone-500" /> Landing Page
+                <ArrowLeft className="w-3.5 h-3.5 text-sky-400" /> Landing Page
               </Link>
             </div>
 
             {/* Typography Header */}
             <div className="mb-7">
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 font-sans">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white font-sans">
                 Sign in to account
               </h1>
-              <p className="text-xs sm:text-sm text-stone-500 mt-2 font-normal">
+              <p className="text-xs sm:text-sm text-slate-400 mt-2 font-normal">
                 Multi-tenant zero-trust security operations platform
               </p>
             </div>
@@ -84,12 +85,12 @@ export function LoginPage() {
               <div>
                 <label
                   htmlFor="login-email"
-                  className="block text-xs font-semibold text-stone-600 mb-1.5 ml-1"
+                  className="block text-xs font-semibold text-slate-300 mb-1.5 ml-1 font-mono uppercase tracking-wider text-[11px]"
                 >
-                  Email Address
+                  Corporate Identity (Email)
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     id="login-email"
                     type="email"
@@ -102,23 +103,24 @@ export function LoginPage() {
                       }
                     }}
                     placeholder="analyst@apex.com"
-                    className="light-input w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm border border-stone-200/90 focus:border-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-300/40 transition-all font-sans placeholder-stone-400"
+                    style={{ backgroundColor: '#06090E', color: '#F1F5F9' }}
+                    className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm !bg-[#06090E] border border-slate-700/80 hover:border-slate-600 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all font-mono !text-slate-100 placeholder-slate-500"
                   />
                 </div>
                 {fieldErrors.email && (
-                  <p className="mt-1 ml-1 text-xs text-rose-500 font-medium">{fieldErrors.email}</p>
+                  <p className="mt-1 ml-1 text-xs text-rose-400 font-mono">{fieldErrors.email}</p>
                 )}
               </div>
 
               <div>
                 <label
                   htmlFor="login-password"
-                  className="block text-xs font-semibold text-stone-600 mb-1.5 ml-1"
+                  className="block text-xs font-semibold text-slate-300 mb-1.5 ml-1 font-mono uppercase tracking-wider text-[11px]"
                 >
-                  Password
+                  Security Passkey (Password)
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     id="login-password"
                     type={showPassword ? 'text' : 'password'}
@@ -131,19 +133,20 @@ export function LoginPage() {
                       }
                     }}
                     placeholder="••••••••••••"
-                    className="light-input w-full rounded-2xl pl-11 pr-11 py-3.5 text-sm border border-stone-200/90 focus:border-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-300/40 transition-all font-sans placeholder-stone-400"
+                    style={{ backgroundColor: '#06090E', color: '#F1F5F9' }}
+                    className="w-full rounded-2xl pl-11 pr-11 py-3.5 text-sm !bg-[#06090E] border border-slate-700/80 hover:border-slate-600 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all font-mono !text-slate-100 placeholder-slate-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-1 focus:outline-none transition-colors cursor-pointer"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 focus:outline-none transition-colors cursor-pointer"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
                 {fieldErrors.password && (
-                  <p className="mt-1 ml-1 text-xs text-rose-500 font-medium">{fieldErrors.password}</p>
+                  <p className="mt-1 ml-1 text-xs text-rose-400 font-mono">{fieldErrors.password}</p>
                 )}
               </div>
 
@@ -151,7 +154,7 @@ export function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 sm:py-4 px-6 rounded-2xl sm:rounded-full bg-[#F5C744] hover:bg-[#EEBA32] active:scale-[0.99] text-stone-900 font-bold text-sm shadow-[0_4px_14px_rgba(245,199,68,0.35)] hover:shadow-[0_6px_20px_rgba(245,199,68,0.45)] transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-3.5 sm:py-4 px-6 rounded-2xl sm:rounded-full bg-[#F5C744] hover:bg-[#EEBA32] active:scale-[0.99] text-stone-950 font-bold text-sm shadow-[0_4px_20px_rgba(245,199,68,0.35)] hover:shadow-[0_6px_25px_rgba(245,199,68,0.45)] transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>Verifying Authentication...</>
@@ -164,19 +167,19 @@ export function LoginPage() {
             </form>
 
             {/* Evaluation Shortcuts / Demo Presets */}
-            <div className="mt-6 pt-5 border-t border-stone-200/80">
+            <div className="mt-6 pt-5 border-t border-slate-800/80">
               <div className="flex items-center justify-between mb-3 px-1">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 font-mono">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 font-mono">
                   Demo Evaluation Presets
                 </span>
-                <div className="flex gap-1.5 bg-stone-200/60 p-0.5 rounded-full text-[10px] font-medium text-stone-600">
+                <div className="flex gap-1.5 bg-slate-900 border border-slate-800 p-0.5 rounded-full text-[10px] font-medium text-slate-400">
                   <button
                     type="button"
                     onClick={() => setSelectedTenant('apex')}
-                    className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer ${
+                    className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                       selectedTenant === 'apex'
-                        ? 'bg-white text-stone-900 shadow-xs font-semibold'
-                        : 'text-stone-500 hover:text-stone-800'
+                        ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40 font-semibold'
+                        : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
                     Apex Defense
@@ -184,10 +187,10 @@ export function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedTenant('sentinel')}
-                    className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer ${
+                    className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                       selectedTenant === 'sentinel'
-                        ? 'bg-white text-stone-900 shadow-xs font-semibold'
-                        : 'text-stone-500 hover:text-stone-800'
+                        ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-semibold'
+                        : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
                     Sentinel Cyber
@@ -196,66 +199,66 @@ export function LoginPage() {
               </div>
 
               {selectedTenant === 'apex' ? (
-                <div className="bg-white/90 border border-stone-200/90 rounded-2xl p-3 shadow-xs">
-                  <div className="text-[11px] font-semibold text-sky-700 mb-2 flex items-center justify-between">
+                <div className="bg-[#06090E]/90 border border-slate-800 rounded-2xl p-3 shadow-sm">
+                  <div className="text-[11px] font-semibold text-sky-400 mb-2 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-sky-500" />
+                      <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
                       Apex Defense (Primary Tenant)
                     </span>
-                    <span className="text-[10px] font-mono text-stone-400">apex-defense</span>
+                    <span className="text-[10px] font-mono text-slate-500">apex-defense</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setDemoCredentials('admin@apex.com', 'Apex ADMIN')}
-                      className="px-2 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-medium transition-all text-center cursor-pointer shadow-xs"
+                      className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-purple-500/30 hover:border-purple-400 text-purple-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Admin
                     </button>
                     <button
                       type="button"
                       onClick={() => setDemoCredentials('manager@apex.com', 'Apex MANAGER')}
-                      className="px-2 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-medium transition-all text-center cursor-pointer shadow-xs"
+                      className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Manager
                     </button>
                     <button
                       type="button"
                       onClick={() => setDemoCredentials('analyst@apex.com', 'Apex ANALYST')}
-                      className="px-2 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-medium transition-all text-center cursor-pointer shadow-xs"
+                      className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Analyst
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="bg-white/90 border border-stone-200/90 rounded-2xl p-3 shadow-xs">
-                  <div className="text-[11px] font-semibold text-indigo-700 mb-2 flex items-center justify-between">
+                <div className="bg-[#06090E]/90 border border-slate-800 rounded-2xl p-3 shadow-sm">
+                  <div className="text-[11px] font-semibold text-indigo-400 mb-2 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                      <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
                       Sentinel Cyber (Secondary Tenant)
                     </span>
-                    <span className="text-[10px] font-mono text-stone-400">sentinel-cyber</span>
+                    <span className="text-[10px] font-mono text-slate-500">sentinel-cyber</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setDemoCredentials('admin@sentinel.com', 'Sentinel ADMIN')}
-                      className="px-2 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-medium transition-all text-center cursor-pointer shadow-xs"
+                      className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-purple-500/30 hover:border-purple-400 text-purple-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Admin
                     </button>
                     <button
                       type="button"
                       onClick={() => setDemoCredentials('manager@sentinel.com', 'Sentinel MANAGER')}
-                      className="px-2 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-medium transition-all text-center cursor-pointer shadow-xs"
+                      className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       Manager
                     </button>
                     <button
                       type="button"
                       onClick={() => setDemoCredentials('user@sentinel.com', 'Sentinel USER')}
-                      className="px-2 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-medium transition-all text-center cursor-pointer shadow-xs"
+                      className="px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-slate-500 text-slate-300 text-xs font-mono transition-all text-center cursor-pointer shadow-xs"
                     >
                       User
                     </button>
@@ -265,27 +268,27 @@ export function LoginPage() {
             </div>
           </div>
 
-          <div className="text-center mt-6 text-[11px] text-stone-500 font-mono">
+          <div className="text-center mt-6 text-xs text-slate-400 font-sans tracking-wide">
             Zero-Trust Isolation • Row-Level Security Guaranteed
           </div>
         </div>
 
         {/* Right Column: Hero Visual with Layered Floating Cards (Directly replicating reference) */}
-        <div className="lg:col-span-6 relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden min-h-[500px] sm:min-h-[580px] lg:min-h-[620px] shadow-lg border border-stone-200/80 bg-stone-100 group">
-          {/* Main Unsplash Team Photo */}
+        <div className="lg:col-span-6 relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden min-h-[500px] sm:min-h-[580px] lg:min-h-[620px] shadow-2xl border border-slate-800 bg-[#06090E] group">
+          {/* Main Unsplash High-Tech SOC Operations Team Photo */}
           <img
-            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=80"
-            alt="Security Operations Team Collaborating"
-            className="absolute inset-0 w-full h-full object-cover object-center filter saturate-[1.05] contrast-[1.02]"
+            src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80"
+            alt="Security Operations Center Monitoring"
+            className="absolute inset-0 w-full h-full object-cover object-center filter saturate-[1.1] contrast-[1.05]"
           />
 
-          {/* Gentle gradient vignette to make floating elements pop */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
+          {/* Vignette overlay for high-contrast legible floating widgets */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080C14]/90 via-[#080C14]/30 to-[#080C14]/50 pointer-events-none" />
 
           {/* Close/Return Button top-right (matching 'x' in reference) */}
           <Link
             to="/"
-            className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-stone-700 hover:text-stone-950 flex items-center justify-center backdrop-blur-md shadow-md transition-all hover:scale-105 z-30 cursor-pointer"
+            className="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center backdrop-blur-md border border-slate-700/80 shadow-md transition-all hover:scale-105 z-30 cursor-pointer"
             title="Return to Landing Page"
             aria-label="Return to Landing Page"
           >
@@ -293,15 +296,15 @@ export function LoginPage() {
           </Link>
 
           {/* 1. Floating Golden Yellow Note (matching "Task Review with Team") */}
-          <div className="absolute top-6 left-6 z-20 bg-[#F5C744] text-stone-900 rounded-2xl p-3.5 shadow-xl max-w-[210px] border border-amber-300/80 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+          <div className="absolute top-6 left-6 z-20 bg-[#F5C744] text-stone-950 rounded-2xl p-3.5 shadow-2xl max-w-[215px] border border-amber-300/80 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
             <div className="text-xs font-bold flex items-center justify-between gap-2">
               <span>Task Review with Team</span>
             </div>
-            <div className="text-[10px] text-stone-800 font-medium mt-0.5">
+            <div className="text-[10px] text-stone-900 font-medium mt-0.5">
               09:30am - 10:00am
             </div>
-            <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-stone-900/10 text-stone-900 text-[9px] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-stone-900" />
+            <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-stone-950/15 text-stone-950 text-[9px] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-stone-950" />
               09:30am - 10:00am
             </div>
           </div>
@@ -312,27 +315,27 @@ export function LoginPage() {
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                 alt="Analyst Sarah"
-                className="w-12 h-12 rounded-full object-cover ring-3 ring-white shadow-xl"
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-sky-400 shadow-xl"
               />
-              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
+              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
             </div>
             <div className="flex -space-x-2">
               <img
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
                 alt="Analyst David"
-                className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-lg"
+                className="w-9 h-9 rounded-full object-cover ring-2 ring-slate-800 shadow-lg"
               />
               <img
                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
                 alt="Analyst Elena"
-                className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-lg"
+                className="w-9 h-9 rounded-full object-cover ring-2 ring-slate-800 shadow-lg"
               />
             </div>
           </div>
 
           {/* 3. Floating Glass Calendar Widget (matching calendar bar in reference) */}
-          <div className="absolute bottom-28 left-5 right-5 sm:left-8 sm:right-8 z-20 backdrop-blur-md bg-stone-900/40 border border-white/25 text-white rounded-2xl p-3.5 shadow-2xl">
-            <div className="grid grid-cols-7 text-center gap-1 text-[10px] text-stone-300 font-medium mb-1">
+          <div className="absolute bottom-28 left-5 right-5 sm:left-8 sm:right-8 z-20 backdrop-blur-md bg-slate-950/70 border border-slate-700/80 text-white rounded-2xl p-3.5 shadow-2xl">
+            <div className="grid grid-cols-7 text-center gap-1 text-[10px] text-slate-400 font-medium mb-1">
               <span>Sun</span>
               <span>Mon</span>
               <span>Tue</span>
@@ -342,22 +345,22 @@ export function LoginPage() {
               <span>Sat</span>
             </div>
             <div className="grid grid-cols-7 text-center gap-1 text-xs font-semibold items-center">
-              <span className="text-stone-300">22</span>
-              <span className="text-stone-300">23</span>
-              <span className="text-stone-300">24</span>
-              <span className="text-stone-300">25</span>
-              <span className="text-stone-300">26</span>
-              <span className="bg-white/30 rounded-lg py-1 border border-white/40 shadow-xs text-white">27</span>
-              <span className="text-stone-300">28</span>
+              <span className="text-slate-400">22</span>
+              <span className="text-slate-400">23</span>
+              <span className="text-slate-400">24</span>
+              <span className="text-slate-400">25</span>
+              <span className="text-slate-400">26</span>
+              <span className="bg-sky-500/30 rounded-lg py-1 border border-sky-400/50 shadow-sm text-sky-200 font-bold">27</span>
+              <span className="text-slate-400">28</span>
             </div>
           </div>
 
-          {/* 4. Floating White Card Bottom-Left (matching "Daily Meeting" in reference) */}
-          <div className="absolute bottom-6 left-5 sm:left-8 z-20 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-stone-100 max-w-[210px]">
-            <div className="text-xs font-bold text-stone-900">
+          {/* 4. Floating White/Glass Card Bottom-Left (matching "Daily Meeting" in reference) */}
+          <div className="absolute bottom-6 left-5 sm:left-8 z-20 bg-slate-900/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-700/80 max-w-[220px]">
+            <div className="text-xs font-bold text-white">
               Daily Meeting
             </div>
-            <div className="text-[10px] text-stone-500 font-mono">
+            <div className="text-[10px] text-slate-400 font-mono">
               12:00pm - 01:00pm
             </div>
             <div className="flex items-center gap-1.5 mt-2">
@@ -365,25 +368,25 @@ export function LoginPage() {
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                   alt="Team"
-                  className="w-5 h-5 rounded-full object-cover ring-1 ring-white"
+                  className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
                   alt="Team"
-                  className="w-5 h-5 rounded-full object-cover ring-1 ring-white"
+                  className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
                   alt="Team"
-                  className="w-5 h-5 rounded-full object-cover ring-1 ring-white"
+                  className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
                   alt="Team"
-                  className="w-5 h-5 rounded-full object-cover ring-1 ring-white"
+                  className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
               </div>
-              <span className="text-[10px] text-stone-600 font-medium">+4 members</span>
+              <span className="text-[10px] text-slate-300 font-medium">+4 members</span>
             </div>
           </div>
         </div>
