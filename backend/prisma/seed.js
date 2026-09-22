@@ -6,7 +6,14 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('--- Starting Deep Trace Database Seeding ---');
 
-  // Clean existing data in reverse dependency order
+  // If database already contains tenants, preserve data
+  const existingTenants = await prisma.tenant.count();
+  if (existingTenants > 0) {
+    console.log(`Database already contains ${existingTenants} tenants. Preserving data.`);
+    return;
+  }
+
+  // Clean existing data in reverse dependency order if empty
   await prisma.auditLog.deleteMany();
   await prisma.securityEvent.deleteMany();
   await prisma.campaignUser.deleteMany();

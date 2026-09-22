@@ -58,8 +58,8 @@ class AuthService {
   async getMe(userId, tenantId) {
     const user = await userRepository.findByIdAndTenant(userId, tenantId);
     if (!user) {
-      const error = new Error('User account not found');
-      error.statusCode = 404;
+      const error = new Error('Session invalid: User account not found');
+      error.statusCode = 401;
       throw error;
     }
 
