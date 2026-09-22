@@ -38,6 +38,27 @@ function ProtectedRoute({ children, requiredRoles = null }) {
   return children;
 }
 
+function GuestRoute({ children }) {
+  const { user, token, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#080C14] flex items-center justify-center text-slate-400 font-mono text-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
+          Verifying security clearance...
+        </div>
+      </div>
+    );
+  }
+
+  if (token && user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
 export function App() {
   return (
     <BrowserRouter>
@@ -47,8 +68,15 @@ export function App() {
             {/* 3D Animated Landing Page */}
             <Route path="/" element={<LandingPage />} />
 
-            {/* Authentication Portal */}
-            <Route path="/login" element={<LoginPage />} />
+            {/* Authentication Portal - Protected from authenticated sessions */}
+            <Route
+              path="/login"
+              element={
+                <GuestRoute>
+                  <LoginPage />
+                </GuestRoute>
+              }
+            />
 
             {/* Authenticated Workspace */}
             <Route

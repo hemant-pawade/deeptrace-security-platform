@@ -19,8 +19,15 @@ import { useToast } from '../context/ToastContext';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user, token } = useAuth();
   const toast = useToast();
+
+  // If already authenticated, never show login page — redirect straight to dashboard
+  React.useEffect(() => {
+    if (token && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [token, user, navigate]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +44,7 @@ export function LoginPage() {
     try {
       await login(email, password);
       toast.success('Authentication verified. Access granted to SOC console.');
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setFieldErrors(err.errors || {});
       toast.error(err.message || 'Login failed. Please verify credentials.');
