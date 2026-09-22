@@ -52,7 +52,7 @@ model Tenant {
 model User {
   id              String          @id @default(uuid())
   tenant_id       String
-  email           String          @unique
+  email           String
   password_hash   String
   full_name       String
   role            Role            @default(USER)
@@ -64,6 +64,7 @@ model User {
   campaign_assignments CampaignUser[]
   audit_logs      AuditLog[]
 
+  @@unique([tenant_id, email])
   @@index([email])
   @@index([tenant_id])
   @@map("users")

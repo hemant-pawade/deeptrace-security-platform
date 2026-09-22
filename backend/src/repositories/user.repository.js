@@ -3,7 +3,7 @@ const prisma = require('../config/db');
 class UserRepository {
   async findByEmail(email) {
     // Note: Used during initial login lookup & global uniqueness check
-    return await prisma.user.findUnique({
+    return await prisma.user.findFirst({
       where: { email },
       include: { tenant: true },
     });
