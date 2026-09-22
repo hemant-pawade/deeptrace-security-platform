@@ -6,10 +6,11 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('--- Starting Deep Trace Database Seeding ---');
 
-  // If database already contains tenants, preserve data
+  // If database already contains tenants, preserve data unless --force is passed
+  const isForce = process.argv.includes('--force');
   const existingTenants = await prisma.tenant.count();
-  if (existingTenants > 0) {
-    console.log(`Database already contains ${existingTenants} tenants. Preserving data.`);
+  if (existingTenants > 0 && !isForce) {
+    console.log(`Database already contains ${existingTenants} tenants. Preserving data. (Use --force to re-seed fresh)`);
     return;
   }
 
