@@ -1,0 +1,15 @@
+{
+  "name": "deeptrace-cybernetics-platform",
+  "version": "1.0.0",
+  "description": "Multi-Tenant Security Management Platform",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && node prisma/seed.js",
+    "test": "cd backend && npm test",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": ["multi-tenant", "cybersecurity", "rbac", "postgres", "prisma", "react", "vite"],
+  "author": "Deep Trace Cybernetics",
+  "license": "ISC"
+}

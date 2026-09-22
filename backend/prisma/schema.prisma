@@ -1,0 +1,148 @@
+// Deep Trace Cybernetics - Prisma Schema
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum EventSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum EventStatus {
+  OPEN
+  RESOLVED
+}
+
+model Tenant {
+  id              String          @id @default(uuid())
+  name            String
+  slug            String          @unique
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  users           User[]
+  campaigns       Campaign[]
+  campaign_users  CampaignUser[]
+  security_events SecurityEvent[]
+  audit_logs      AuditLog[]
+
+  @@map("tenants")
+}
+
+model User {
+  id              String          @id @default(uuid())
+  tenant_id       String
+  email           String
+  password_hash   String
+  full_name       String
+  role            Role            @default(USER)
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  tenant          Tenant          @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  created_campaigns Campaign[]    @relation("CreatedByUser")
+  campaign_assignments CampaignUser[]
+  audit_logs      AuditLog[]
+
+  @@unique([tenant_id, email])
+  @@index([email])
+  @@index([tenant_id])
+  @@map("users")
+}
+
+model Campaign {
+  id              String          @id @default(uuid())
+  tenant_id       String
+  name            String
+  description     String?
+  status          CampaignStatus  @default(DRAFT)
+  start_date      DateTime?
+  end_date        DateTime?
+  created_by      String
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  tenant          Tenant          @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  creator         User            @relation("CreatedByUser", fields: [created_by], references: [id], onDelete: Restrict)
+  assigned_users  CampaignUser[]
+
+  @@index([tenant_id])
+  @@index([status])
+  @@map("campaigns")
+}
+
+model CampaignUser {
+  id              String          @id @default(uuid())
+  tenant_id       String
+  campaign_id     String
+  user_id         String
+  assigned_at     DateTime        @default(now())
+
+  tenant          Tenant          @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  campaign        Campaign        @relation(fields: [campaign_id], references: [id], onDelete: Cascade)
+  user            User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([campaign_id, user_id])
+  @@index([campaign_id])
+  @@index([user_id])
+  @@index([tenant_id])
+  @@map("campaign_users")
+}
+
+model SecurityEvent {
+  id              String          @id @default(uuid())
+  tenant_id       String
+  event_type      String
+  severity        EventSeverity   @default(LOW)
+  status          EventStatus     @default(OPEN)
+  description     String
+  source_ip       String?
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  tenant          Tenant          @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@index([tenant_id])
+  @@index([severity])
+  @@index([status])
+  @@map("security_events")
+}
+
+model AuditLog {
+  id              String          @id @default(uuid())
+  tenant_id       String
+  user_id         String?
+  action          String
+  entity_type     String
+  entity_id       String?
+  description     String
+  metadata        Json?
+  created_at      DateTime        @default(now())
+
+  tenant          Tenant          @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user            User?           @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@map("audit_logs")
+}

@@ -1,0 +1,25 @@
+const jwt = require('jsonwebtoken');
+const config = require('../config');
+
+const generateToken = (payload) => {
+  return jwt.sign(
+    {
+      userId: payload.userId,
+      tenantId: payload.tenantId,
+      role: payload.role,
+      email: payload.email,
+      fullName: payload.fullName,
+    },
+    config.jwtSecret,
+    { expiresIn: config.jwtExpiresIn }
+  );
+};
+
+const verifyToken = (token) => {
+  return jwt.verify(token, config.jwtSecret);
+};
+
+module.exports = {
+  generateToken,
+  verifyToken,
+};
