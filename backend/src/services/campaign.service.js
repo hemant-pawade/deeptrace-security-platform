@@ -12,8 +12,8 @@ const VALID_TRANSITIONS = {
 
 class CampaignService {
   async listCampaigns(tenantId, userContext, query) {
-    const page = query.page || 1;
-    const limit = query.limit || 20;
+    const page = Math.max(1, parseInt(query.page, 10) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
     const { campaigns, total } = await campaignRepository.listCampaigns(tenantId, userContext, {

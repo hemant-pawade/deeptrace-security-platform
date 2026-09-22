@@ -3,8 +3,8 @@ const { logAudit } = require('../utils/auditLogger');
 
 class SecurityEventService {
   async listEvents(tenantId, query) {
-    const page = query.page || 1;
-    const limit = query.limit || 20;
+    const page = Math.max(1, parseInt(query.page, 10) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
     const { events, total } = await securityEventRepository.listEvents(tenantId, {
