@@ -3,6 +3,12 @@
 > **Technical Assessment Submission**  
 > **Tech Stack:** Node.js / Express.js • React.js / Vite • PostgreSQL / Prisma • Tailwind CSS • Framer Motion
 
+### 🌐 Live Production Deployment
+- **Frontend Application**: [https://deeptrace-frontend-mksy.onrender.com](https://deeptrace-frontend-mksy.onrender.com)
+- **Backend API Web Service**: [https://deeptrace-backend-lyxk.onrender.com](https://deeptrace-backend-lyxk.onrender.com)
+- **API Health Endpoint**: [https://deeptrace-backend-lyxk.onrender.com/health](https://deeptrace-backend-lyxk.onrender.com/health)
+- **GitHub Repository**: [https://github.com/hemant-pawade/deeptrace-security-platform](https://github.com/hemant-pawade/deeptrace-security-platform)
+
 A production-grade, multi-tenant security operations and campaign management platform built with strict tenant isolation, cryptographic role-based access control (RBAC), tamper-evident audit logging, and deterministic campaign lifecycle state machines.
 
 ---
@@ -285,19 +291,18 @@ The platform includes an automated security test runner in `backend/tests/securi
 ```bash
 npm test
 ```
-**Test Output Verification:**
-- 22 passing security assertions across:
-  - Valid token issuance for both tenants
-  - Cross-tenant data isolation (`GET /api/campaigns/:sentinelId` returns `404 Not Found` for Apex users)
-  - Cross-tenant mutation isolation (`PATCH` and `DELETE` return `404`)
-  - USER role calling `DELETE /api/campaigns` returns `403 Forbidden`
-  - USER role calling `POST /api/campaigns` returns `403 Forbidden`
-  - USER role calling `GET /api/audit-logs` returns `403 Forbidden`
-  - USER role calling `POST /api/users` returns `403 Forbidden`
-  - Campaign transition `COMPLETED` -> `DRAFT` returns `409 Conflict`
-  - Campaign transition `DRAFT` -> `ACTIVE` succeeds (`200 OK`)
-  - Spoofed `tenant_id` in request payload is completely stripped and ignored in favor of verified JWT payload
-- Immutable audit logs are written for every lifecycle event.
+**Test Output Verification (31 Passed, 0 Failed):**
+- **Authentication & JWT Issuance**: Valid token claims, distinct tenant IDs.
+- **Cross-Tenant Isolation**: Cross-tenant `GET`, `PATCH`, `DELETE` return `404 Not Found` (Zero data leak).
+- **Role-Based Access Control**: USER role attempting `DELETE /api/campaigns`, `POST /api/campaigns`, `GET /api/audit-logs`, `POST /api/users` strictly return `403 Forbidden`.
+- **Campaign State Machine**: Terminal `COMPLETED` -> `DRAFT` transition returns `409 Conflict`; valid `DRAFT` -> `ACTIVE` succeeds.
+- **Tenant ID Spoofing Immunity**: Spoofed `tenant_id` in request body is stripped; tenant identity derived exclusively from JWT.
+- **Audit Logging**: Verified records for user logins, campaign creation, and operative assignments.
+- **Role Provisioning & Mutations**: ADMIN successfully provisions `MANAGER` and promotes operatives to `ADMIN`.
+- **Dashboard RBAC Confidentiality**: USER role calling `/api/dashboard/recent-activity` receives empty audit trail with zero administrative leakage.
+- **Form Date Handling**: Empty date strings `""` serialize to `null` cleanly without 400 validation rejections.
+- **Terminal State Protection**: Assigning operatives to a completed campaign returns `409 Conflict`.
+- **Foreign Key Integrity**: Deleting active admin or campaign creators returns `400/409 Conflict` without 500 crashes.
 
 ---
 
@@ -354,3 +359,35 @@ If you prefer deploying services individually:
 - **Redirects / Rewrites**:
   - Rule already included via `frontend/public/_redirects` (`/* /index.html 200`).
 - Click **Create Static Site**.
+
+---
+
+## 11. Docker & Docker Compose (Bonus)
+
+Run the complete multi-container stack (PostgreSQL + Backend + Frontend) locally with a single command:
+
+```bash
+docker-compose up --build
+```
+- **Frontend**: `http://localhost` (Port 80 via Nginx reverse proxy)
+- **Backend API**: `http://localhost:5000`
+- **PostgreSQL**: `localhost:5432`
+
+---
+
+## 12. Postman Collection & CI Pipeline (Bonus)
+
+### Postman Collection
+Import [`DeepTrace_Postman_Collection.json`](./DeepTrace_Postman_Collection.json) into Postman to test:
+- Authentication & JWT token capture (`Apex Admin`, `Apex Manager`, `Apex Analyst`, `Sentinel Admin`)
+- Cross-tenant access attempts (demonstrating expected `404 Not Found`)
+- State transitions (`DRAFT` -> `ACTIVE` -> `COMPLETED`)
+- Security event triage & immutable audit trail queries
+
+### GitHub Actions CI
+Automated CI workflow in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml):
+- Boots an isolated PostgreSQL 15 service container
+- Runs database migrations & seed scripts
+- Executes all 31 automated security test assertions
+- Compiles & builds the production Vite frontend bundle
+

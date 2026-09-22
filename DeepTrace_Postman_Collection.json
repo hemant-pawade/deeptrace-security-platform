@@ -1,0 +1,254 @@
+{
+  "info": {
+    "name": "Deep Trace Cybernetics — Security Management API",
+    "description": "Comprehensive Postman collection for evaluating Deep Trace Multi-Tenant Platform with RBAC, State Machine, and Anti-Cross-Tenant isolation tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login - Apex Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@apex.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login - Apex Manager",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"manager@apex.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login - Apex Analyst (USER)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"analyst@apex.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login - Sentinel Admin (Tenant B)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sentinel.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Current Session Profile (/auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard & Telemetry",
+      "item": [
+        {
+          "name": "Get Tenant KPIs Metrics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/metrics", "host": ["{{baseUrl}}"], "path": ["dashboard", "metrics"] }
+          }
+        },
+        {
+          "name": "Get Recent Security Activity",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/recent-activity", "host": ["{{baseUrl}}"], "path": ["dashboard", "recent-activity"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campaign Operations",
+      "item": [
+        {
+          "name": "List Campaigns (Paginated & Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/campaigns?page=1&limit=10&status=ACTIVE",
+              "host": ["{{baseUrl}}"],
+              "path": ["campaigns"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "ACTIVE" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Campaign (DRAFT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Operation Nightwatch Penetration Test\",\n  \"description\": \"Black-box security audit of edge firewalls.\",\n  \"status\": \"DRAFT\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/campaigns", "host": ["{{baseUrl}}"], "path": ["campaigns"] }
+          }
+        },
+        {
+          "name": "Transition Campaign Status (DRAFT -> ACTIVE)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/campaigns/{{campaignId}}", "host": ["{{baseUrl}}"], "path": ["campaigns", "{{campaignId}}"] }
+          }
+        },
+        {
+          "name": "Assign Operative to Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{userId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/campaigns/{{campaignId}}/users", "host": ["{{baseUrl}}"], "path": ["campaigns", "{{campaignId}}", "users"] }
+          }
+        },
+        {
+          "name": "Cross-Tenant Access Test (Expect 404)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/campaigns/{{sentinelCampaignId}}", "host": ["{{baseUrl}}"], "path": ["campaigns", "{{sentinelCampaignId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security Events",
+      "item": [
+        {
+          "name": "List Security Events",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/security-events?page=1&limit=10&severity=CRITICAL", "host": ["{{baseUrl}}"], "path": ["security-events"] }
+          }
+        },
+        {
+          "name": "Create Security Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_type\": \"DISTRIBUTED_SYN_FLOOD\",\n  \"severity\": \"CRITICAL\",\n  \"status\": \"OPEN\",\n  \"description\": \"Anomalous traffic spike targeting API Gateway.\",\n  \"source_ip\": \"198.51.100.42\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/security-events", "host": ["{{baseUrl}}"], "path": ["security-events"] }
+          }
+        },
+        {
+          "name": "Resolve Security Event",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/security-events/{{eventId}}", "host": ["{{baseUrl}}"], "path": ["security-events", "{{eventId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management (ADMIN)",
+      "item": [
+        {
+          "name": "List Organization Operatives",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        },
+        {
+          "name": "Provision New Operative",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Alexander Pierce\",\n  \"email\": \"pierce@apex.com\",\n  \"role\": \"MANAGER\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Trail (ADMIN & MANAGER)",
+      "item": [
+        {
+          "name": "Fetch Immutable Audit Trail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/audit-logs?page=1&limit=20", "host": ["{{baseUrl}}"], "path": ["audit-logs"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "https://deeptrace-backend-lyxk.onrender.com/api" },
+    { "key": "token", "value": "" }
+  ]
+}
