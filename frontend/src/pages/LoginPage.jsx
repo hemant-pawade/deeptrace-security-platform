@@ -40,13 +40,62 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [selectedTenant, setSelectedTenant] = useState('apex');
 
-  // Simulated live log ticker time
-  const [currentTime, setCurrentTime] = useState(() => new Date().toISOString().substring(11, 19));
+  const formatTime = (date) => {
+    return date.toISOString().substring(11, 19);
+  };
+
+  const [currentTime, setCurrentTime] = useState(() => formatTime(new Date()));
+
+  // Realistic chronological telemetry logs with distinct past timestamps
+  const [logs, setLogs] = useState(() => {
+    const now = Date.now();
+    return [
+      { id: 1, time: formatTime(new Date(now - 17000)), type: 'AUTH_VERIFY', color: 'text-emerald-400', text: 'JWT HS-256 signature cryptographically valid' },
+      { id: 2, time: formatTime(new Date(now - 12000)), type: 'RLS_SCOPED', color: 'text-sky-400', text: 'Query bounded to authenticated user tenant_id' },
+      { id: 3, time: formatTime(new Date(now - 8000)), type: 'INTERCEPT', color: 'text-rose-400', text: 'Cross-tenant probe GET /campaigns?tenant=sentinel' },
+      { id: 4, time: formatTime(new Date(now - 4000)), type: '403_BLOCKED', color: 'text-amber-400 font-semibold', text: 'Zero-trust guard terminated request (Zero Data Leak)' },
+      { id: 5, time: formatTime(new Date(now - 1000)), type: 'AUDIT_LEDGER', color: 'text-slate-300', text: 'Event committed to SHA-256 tamper-evident log' },
+    ];
+  });
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date().toISOString().substring(11, 19));
+    const clock = setInterval(() => {
+      setCurrentTime(formatTime(new Date()));
     }, 1000);
-    return () => clearInterval(timer);
+    return () => clearInterval(clock);
+  }, []);
+
+  // Dynamically stream new security events every 3.5s with real current timestamps
+  useEffect(() => {
+    const eventPool = [
+      { type: 'AUTH_VERIFY', color: 'text-emerald-400', text: 'JWT HS-256 signature cryptographically valid' },
+      { type: 'RLS_SCOPED', color: 'text-sky-400', text: 'Row-level query bounded to tenant context' },
+      { type: 'INTERCEPT', color: 'text-rose-400', text: 'Unauthorized cross-tenant probe intercepted by RLS gateway' },
+      { type: '403_BLOCKED', color: 'text-amber-400 font-semibold', text: 'HTTP 403 Forbidden: Zero data exposure guaranteed' },
+      { type: 'AUDIT_LEDGER', color: 'text-slate-300', text: 'Cryptographic SHA-256 audit entry persisted' },
+      { type: 'RBAC_GUARD', color: 'text-cyan-400', text: 'Role-based access check passed: permissions verified' },
+      { type: 'HEARTBEAT', color: 'text-emerald-400', text: 'Zero-Trust gateway operational • 0 active anomalies' },
+    ];
+
+    let index = 0;
+    const streamInterval = setInterval(() => {
+      const now = new Date();
+      const nextEvent = eventPool[index % eventPool.length];
+      index++;
+
+      setLogs((prevLogs) => [
+        ...prevLogs.slice(1),
+        {
+          id: Date.now() + Math.random(),
+          time: formatTime(now),
+          type: nextEvent.type,
+          color: nextEvent.color,
+          text: nextEvent.text,
+        },
+      ]);
+    }, 3500);
+
+    return () => clearInterval(streamInterval);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -399,25 +448,18 @@ export function LoginPage() {
 
           {/* Live Real-Time Defense Log Stream */}
           <div className="my-2 bg-[#04060A] border border-slate-800/90 rounded-xl p-3 text-[10.5px] leading-relaxed shadow-inner font-mono text-slate-300 space-y-1">
-            <div className="text-slate-500 text-[9.5px] pb-1 border-b border-slate-900 flex justify-between">
-              <span>LIVE TELEMETRY INTERCEPTION FEED</span>
-              <span className="text-sky-400">{currentTime} UTC</span>
+            <div className="text-slate-500 text-[9.5px] pb-1 border-b border-slate-900 flex justify-between items-center">
+              <span className="flex items-center gap-1.5 text-slate-400 font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                LIVE TELEMETRY INTERCEPTION FEED
+              </span>
+              <span className="text-sky-400 font-bold">{currentTime} UTC</span>
             </div>
-            <div className="text-emerald-400/90">
-              <span className="text-slate-500">[{currentTime}]</span> [AUTH_VERIFY] JWT HS-256 signature cryptographically valid
-            </div>
-            <div className="text-sky-400/90">
-              <span className="text-slate-500">[{currentTime}]</span> [RLS_SCOPED] Query bounded to authenticated user tenant_id
-            </div>
-            <div className="text-rose-400">
-              <span className="text-slate-500">[{currentTime}]</span> [INTERCEPT] Cross-tenant probe GET /campaigns?tenant=sentinel
-            </div>
-            <div className="text-amber-400 font-semibold">
-              <span className="text-slate-500">[{currentTime}]</span> [403_BLOCKED] Zero-trust guard terminated request (Zero Data Leak)
-            </div>
-            <div className="text-slate-400">
-              <span className="text-slate-500">[{currentTime}]</span> [AUDIT_LEDGER] Event committed to SHA-256 tamper-evident log
-            </div>
+            {logs.map((log) => (
+              <div key={log.id} className={log.color}>
+                <span className="text-slate-500">[{log.time}]</span> [{log.type}] {log.text}
+              </div>
+            ))}
           </div>
 
           {/* Automated Verification Suite Metrics Grid */}
