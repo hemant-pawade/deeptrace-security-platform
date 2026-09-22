@@ -36,20 +36,37 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Force dark theme native controls and override browser autofill background */
-  input {
+  /* Dark theme native controls for default dark inputs */
+  input:not(.light-input) {
     color-scheme: dark;
     background-color: #06090E !important;
     color: #f1f5f9 !important;
   }
 
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
-  input:-webkit-autofill:active {
+  input:not(.light-input):-webkit-autofill,
+  input:not(.light-input):-webkit-autofill:hover, 
+  input:not(.light-input):-webkit-autofill:focus, 
+  input:not(.light-input):-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0px 1000px #06090E inset !important;
     -webkit-text-fill-color: #f1f5f9 !important;
     caret-color: #f1f5f9 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Clean light theme inputs matching the Dribbble reference */
+  input.light-input {
+    color-scheme: light;
+    background-color: #F3EFE6 !important;
+    color: #1c1917 !important;
+  }
+
+  input.light-input:-webkit-autofill,
+  input.light-input:-webkit-autofill:hover,
+  input.light-input:-webkit-autofill:focus,
+  input.light-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #F3EFE6 inset !important;
+    -webkit-text-fill-color: #1c1917 !important;
+    caret-color: #1c1917 !important;
     transition: background-color 5000s ease-in-out 0s;
   }
 }
