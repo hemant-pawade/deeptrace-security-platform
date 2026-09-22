@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, Lock, Mail, ArrowRight, ArrowLeft, Eye, EyeOff, X, CheckCircle2 } from 'lucide-react';
+import {
+  Shield,
+  Lock,
+  Mail,
+  ArrowRight,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  X,
+  ShieldCheck,
+  Activity,
+  CheckCircle2,
+  Radio,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -273,7 +286,7 @@ export function LoginPage() {
           </div>
         </div>
 
-        {/* Right Column: Hero Visual with Layered Floating Cards (Directly replicating reference) */}
+        {/* Right Column: Hero Visual with Project-Accurate Security Telemetry Cards */}
         <div className="lg:col-span-6 relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden min-h-[500px] sm:min-h-[580px] lg:min-h-[620px] shadow-2xl border border-slate-800 bg-[#06090E] group">
           {/* Main Unsplash High-Tech SOC Operations Team Photo */}
           <img
@@ -295,98 +308,116 @@ export function LoginPage() {
             <X className="w-4 h-4" />
           </Link>
 
-          {/* 1. Floating Golden Yellow Note (matching "Task Review with Team") */}
-          <div className="absolute top-6 left-6 z-20 bg-[#F5C744] text-stone-950 rounded-2xl p-3.5 shadow-2xl max-w-[215px] border border-amber-300/80 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+          {/* 1. Floating Golden Security Card: Zero-Trust RLS Active (replaces generic 'Task Review') */}
+          <div className="absolute top-6 left-6 z-20 bg-[#F5C744] text-stone-950 rounded-2xl p-3.5 shadow-2xl max-w-[225px] border border-amber-300/80 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
             <div className="text-xs font-bold flex items-center justify-between gap-2">
-              <span>Task Review with Team</span>
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-stone-950" />
+                Zero-Trust Policy
+              </span>
             </div>
             <div className="text-[10px] text-stone-900 font-medium mt-0.5">
-              09:30am - 10:00am
+              Row-Level Isolation Enforced
             </div>
             <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-stone-950/15 text-stone-950 text-[9px] font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-stone-950" />
-              09:30am - 10:00am
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+              0 Cross-Tenant Leaks
             </div>
           </div>
 
-          {/* 2. Floating Circular Avatars Cluster (matching right avatar cluster in reference) */}
+          {/* 2. Floating Circular Avatars: Active SOC Clearance Operators */}
           <div className="absolute top-36 right-7 z-20 flex flex-col items-center gap-1.5">
-            <div className="relative">
+            <div className="relative group/avatar cursor-pointer" title="Lead SecOps Analyst (Level 4 Clearance)">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                alt="Analyst Sarah"
+                alt="Lead SecOps Analyst"
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-sky-400 shadow-xl"
               />
-              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
+              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-900" title="Active Clearance" />
             </div>
             <div className="flex -space-x-2">
               <img
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                alt="Analyst David"
+                alt="Threat Hunter"
                 className="w-9 h-9 rounded-full object-cover ring-2 ring-slate-800 shadow-lg"
+                title="Apex Defense SOC Team"
               />
               <img
                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
-                alt="Analyst Elena"
+                alt="Security Auditor"
                 className="w-9 h-9 rounded-full object-cover ring-2 ring-slate-800 shadow-lg"
+                title="Sentinel Cyber SOC Team"
               />
             </div>
+            <span className="text-[9px] font-mono text-sky-300/80 bg-slate-950/80 px-2 py-0.5 rounded-full border border-sky-500/20 backdrop-blur-xs">
+              SOC Tier-3
+            </span>
           </div>
 
-          {/* 3. Floating Glass Calendar Widget (matching calendar bar in reference) */}
-          <div className="absolute bottom-28 left-5 right-5 sm:left-8 sm:right-8 z-20 backdrop-blur-md bg-slate-950/70 border border-slate-700/80 text-white rounded-2xl p-3.5 shadow-2xl">
-            <div className="grid grid-cols-7 text-center gap-1 text-[10px] text-slate-400 font-medium mb-1">
-              <span>Sun</span>
-              <span>Mon</span>
-              <span>Tue</span>
-              <span>Wed</span>
-              <span>Thu</span>
-              <span>Fri</span>
-              <span>Sat</span>
+          {/* 3. Floating Security Defense Telemetry Matrix (replaces generic calendar days) */}
+          <div className="absolute bottom-28 left-5 right-5 sm:left-8 sm:right-8 z-20 backdrop-blur-md bg-slate-950/80 border border-slate-700/80 text-white rounded-2xl p-3.5 shadow-2xl">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-2">
+              <span className="flex items-center gap-1.5 text-sky-400 font-semibold uppercase tracking-wider">
+                <Activity className="w-3 h-3 text-sky-400 animate-pulse" />
+                Security Verification Suite
+              </span>
+              <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                31/31 PASS
+              </span>
             </div>
-            <div className="grid grid-cols-7 text-center gap-1 text-xs font-semibold items-center">
-              <span className="text-slate-400">22</span>
-              <span className="text-slate-400">23</span>
-              <span className="text-slate-400">24</span>
-              <span className="text-slate-400">25</span>
-              <span className="text-slate-400">26</span>
-              <span className="bg-sky-500/30 rounded-lg py-1 border border-sky-400/50 shadow-sm text-sky-200 font-bold">27</span>
-              <span className="text-slate-400">28</span>
+            <div className="grid grid-cols-4 gap-1.5 text-center font-mono">
+              <div className="bg-slate-900/90 rounded-lg py-1 px-1.5 border border-slate-800">
+                <div className="text-[9px] text-slate-400 uppercase">RLS Scope</div>
+                <div className="text-[11px] font-bold text-sky-400">100%</div>
+              </div>
+              <div className="bg-slate-900/90 rounded-lg py-1 px-1.5 border border-slate-800">
+                <div className="text-[9px] text-slate-400 uppercase">RBAC Guard</div>
+                <div className="text-[11px] font-bold text-emerald-400">Strict</div>
+              </div>
+              <div className="bg-slate-900/90 rounded-lg py-1 px-1.5 border border-slate-800">
+                <div className="text-[9px] text-slate-400 uppercase">JWT Auth</div>
+                <div className="text-[11px] font-bold text-cyan-400">Verified</div>
+              </div>
+              <div className="bg-sky-500/20 rounded-lg py-1 px-1.5 border border-sky-400/40 shadow-xs">
+                <div className="text-[9px] text-sky-300 uppercase">Audit Trail</div>
+                <div className="text-[11px] font-bold text-white">SHA-256</div>
+              </div>
             </div>
           </div>
 
-          {/* 4. Floating White/Glass Card Bottom-Left (matching "Daily Meeting" in reference) */}
-          <div className="absolute bottom-6 left-5 sm:left-8 z-20 bg-slate-900/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-700/80 max-w-[220px]">
-            <div className="text-xs font-bold text-white">
-              Daily Meeting
+          {/* 4. Floating Active SOC Incident Desk (replaces generic 'Daily Meeting') */}
+          <div className="absolute bottom-6 left-5 sm:left-8 z-20 bg-slate-900/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-700/80 max-w-[240px]">
+            <div className="text-xs font-bold text-white flex items-center gap-1.5">
+              <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              Live SOC Operations Desk
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">
-              12:00pm - 01:00pm
+            <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+              Apex & Sentinel Isolation Active
             </div>
             <div className="flex items-center gap-1.5 mt-2">
               <div className="flex -space-x-1.5">
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                  alt="Team"
+                  alt="SOC Team"
                   className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                  alt="Team"
+                  alt="SOC Team"
                   className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
-                  alt="Team"
+                  alt="SOC Team"
                   className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-                  alt="Team"
+                  alt="SOC Team"
                   className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-800"
                 />
               </div>
-              <span className="text-[10px] text-slate-300 font-medium">+4 members</span>
+              <span className="text-[10px] text-emerald-300 font-medium font-mono">0 Breaches Detected</span>
             </div>
           </div>
         </div>
