@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { AppLayout } from './components/layout/AppLayout';
 
+import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CampaignsPage } from './pages/CampaignsPage';
@@ -43,27 +44,28 @@ export function App() {
       <ToastProvider>
         <AuthProvider>
           <Routes>
-            {/* Public Entry */}
+            {/* 3D Animated Landing Page */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Authentication Portal */}
             <Route path="/login" element={<LoginPage />} />
 
             {/* Authenticated Workspace */}
             <Route
-              path="/"
               element={
                 <ProtectedRoute>
                   <AppLayout />
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="campaigns" element={<CampaignsPage />} />
-              <Route path="campaigns/:id" element={<CampaignDetailPage />} />
-              <Route path="security-events" element={<SecurityEventsPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/campaigns" element={<CampaignsPage />} />
+              <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
+              <Route path="/security-events" element={<SecurityEventsPage />} />
 
               {/* Role Restricted Routes */}
               <Route
-                path="users"
+                path="/users"
                 element={
                   <ProtectedRoute requiredRoles={['ADMIN', 'MANAGER']}>
                     <UsersPage />
@@ -71,7 +73,7 @@ export function App() {
                 }
               />
               <Route
-                path="audit-logs"
+                path="/audit-logs"
                 element={
                   <ProtectedRoute requiredRoles={['ADMIN', 'MANAGER']}>
                     <AuditLogsPage />
@@ -81,7 +83,7 @@ export function App() {
             </Route>
 
             {/* Fallback */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AuthProvider>
       </ToastProvider>
