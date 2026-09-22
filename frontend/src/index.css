@@ -35,6 +35,23 @@
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
+
+  /* Force dark theme native controls and override browser autofill background */
+  input {
+    color-scheme: dark;
+    background-color: #06090E !important;
+    color: #f1f5f9 !important;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #06090E inset !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+    caret-color: #f1f5f9 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
 
 /* Custom subtle scrollbar */
