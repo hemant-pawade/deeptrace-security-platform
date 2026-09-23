@@ -11,6 +11,11 @@ app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const { getGatewayRoot } = require('./controllers/gateway.controller');
+
+// Root Gateway Documentation & Portal Navigation
+app.get('/', getGatewayRoot);
+
 // Liveness / readiness probe
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'UP', service: 'DeepTrace-Security-API', timestamp: new Date().toISOString() });
