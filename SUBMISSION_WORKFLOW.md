@@ -15,7 +15,7 @@
 | **Live Backend API Gateway** | [https://deeptrace-backend-lyxk.onrender.com](https://deeptrace-backend-lyxk.onrender.com) |
 | **API Health Probe** | [https://deeptrace-backend-lyxk.onrender.com/health](https://deeptrace-backend-lyxk.onrender.com/health) |
 | **GitHub Repository** | [https://github.com/hemant-pawade/deeptrace-security-platform](https://github.com/hemant-pawade/deeptrace-security-platform) |
-| **Google Drive Demo Video** | `[PASTE_YOUR_GOOGLE_DRIVE_VIDEO_LINK_HERE]` *(Access: Anyone with link)* |
+| **Google Drive Demo Video** | [https://drive.google.com/file/d/14N5ejFt6owvAEK8P45zLbKIyI8GY25_3/view?usp=sharing](https://drive.google.com/file/d/14N5ejFt6owvAEK8P45zLbKIyI8GY25_3/view?usp=sharing) *(Access: Anyone with link)* |
 
 ---
 

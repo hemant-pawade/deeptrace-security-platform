@@ -4,10 +4,11 @@
 > **Tech Stack:** Node.js / Express.js • React.js / Vite • PostgreSQL / Prisma • Tailwind CSS • Framer Motion
 
 ### 🌐 Live Production Deployment
-- **Frontend Application**: [https://deeptrace-frontend-mksy.onrender.com](https://deeptrace-frontend-mksy.onrender.com)
-- **Backend API Web Service**: [https://deeptrace-backend-lyxk.onrender.com](https://deeptrace-backend-lyxk.onrender.com)
+- **Live Frontend Application**: [https://deeptrace-frontend-mksy.onrender.com](https://deeptrace-frontend-mksy.onrender.com)
+- **Live Backend API Web Service**: [https://deeptrace-backend-lyxk.onrender.com](https://deeptrace-backend-lyxk.onrender.com)
 - **API Health Endpoint**: [https://deeptrace-backend-lyxk.onrender.com/health](https://deeptrace-backend-lyxk.onrender.com/health)
 - **GitHub Repository**: [https://github.com/hemant-pawade/deeptrace-security-platform](https://github.com/hemant-pawade/deeptrace-security-platform)
+- **Walkthrough Demo Video**: [Watch Demo on Google Drive](https://drive.google.com/file/d/14N5ejFt6owvAEK8P45zLbKIyI8GY25_3/view?usp=sharing) *(Public Access)*
 
 A production-grade, multi-tenant security operations and campaign management platform built with strict tenant isolation, cryptographic role-based access control (RBAC), tamper-evident audit logging, and deterministic campaign lifecycle state machines.
 
